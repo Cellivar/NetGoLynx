@@ -10,14 +10,18 @@ namespace NetGoLynx.Controllers
 {
 	public class HomeController : Controller
 	{
+		[HttpGet]
+		[Route("")]
 		public IActionResult Index()
 		{
 			return View();
 		}
 
-		public IActionResult Privacy()
+		[HttpGet]
+		[Route("{*url}")]
+		public IActionResult Resolve(string url)
 		{
-			return View();
+			return Content($"Request: {url}");
 		}
 
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
