@@ -9,5 +9,11 @@ namespace NetGoLynx.Data
             : base(options) { }
 
         public DbSet<Redirect> Redirects { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Redirect>()
+                .HasIndex(r => r.Name);
+        }
     }
 }
