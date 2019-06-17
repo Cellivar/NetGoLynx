@@ -1,20 +1,20 @@
-﻿namespace NetGoLynx.Models
+﻿using System.Collections.Generic;
+
+namespace NetGoLynx.Models
 {
     public class IndexModel
     {
-        public IndexModel(Operation op, string suggestedLinkName)
+        public IndexModel(
+            string suggestedLinkName = "",
+            IEnumerable<Redirect> redirects = null,
+            int id = 0)
         {
-            Op = op;
             LinkName = suggestedLinkName;
+            Redirects = redirects;
         }
 
-        public Operation Op { get; set; }
-        public string LinkName { get; private set; }
+        public string LinkName { get; }
 
-        public enum Operation
-        {
-            List,
-            Add,
-        }
+        public IEnumerable<Redirect> Redirects { get; }
     }
 }

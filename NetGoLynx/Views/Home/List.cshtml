@@ -1,0 +1,37 @@
+﻿@model NetGoLynx.Models.IndexModel
+@{
+    ViewData["Title"] = "All Golinks";
+}
+
+<h1 class="display-4">Current links</h1>
+<table class="table table-striped table-bordered table-hover">
+    <thead>
+        <tr>
+            <td>
+                @Html.DisplayNameFor(m => m.Redirects.FirstOrDefault().RedirectId)
+            </td>
+            <td>
+                @Html.DisplayNameFor(m => m.Redirects.FirstOrDefault().Name)
+            </td>
+            <td>
+                @Html.DisplayNameFor(m => m.Redirects.FirstOrDefault().Target)
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var redirect in Model.Redirects)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(m => redirect.RedirectId)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => redirect.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => redirect.Target)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

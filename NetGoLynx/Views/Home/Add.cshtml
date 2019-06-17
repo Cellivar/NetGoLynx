@@ -1,16 +1,18 @@
 ﻿@model NetGoLynx.Models.IndexModel
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Add Golink";
 }
 
 <div class="text-center">
-    @if (Model.Op == IndexModel.Operation.Add)
+    @if (!string.IsNullOrEmpty(Model.LinkName))
     {
+
         <h1 class="display-4">Link not found :(</h1>
         <p>Perhaps you wanted to add @Model.LinkName as a new link?</p>
     }
     else
     {
-        <h1 class="display-4">Current links</h1>
+        <h1 class="display-4">Add a link</h1>
     }
+
 </div>

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -20,9 +19,7 @@ namespace NetGoLynx.Controllers
             _context = context;
         }
 
-        // GET: netgolynxapi/Test
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Redirect>>> GetRedirects()
+        internal async Task<IEnumerable<Redirect>> GetRedirectEntriesAsync()
         {
             return await _context.Redirects.ToListAsync();
         }
@@ -62,7 +59,7 @@ namespace NetGoLynx.Controllers
         internal async Task<Redirect> GetRedirectEntry(string name)
         {
             return await _context.Redirects
-                .FirstOrDefaultAsync(r => r.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+                .FirstOrDefaultAsync(r => r.Name == name);
         }
 
         // PUT: netgolynxapi/Test/5
