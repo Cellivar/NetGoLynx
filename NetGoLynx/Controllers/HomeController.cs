@@ -1,18 +1,15 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using NetGoLynx.Data;
 using NetGoLynx.Models;
 
 namespace NetGoLynx.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly RedirectContext _context;
         private readonly RedirectController _redirectController;
 
-        public HomeController(RedirectContext context, RedirectController redirectController)
+        public HomeController(RedirectController redirectController)
         {
-            _context = context;
             _redirectController = redirectController;
         }
 
