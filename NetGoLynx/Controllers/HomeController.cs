@@ -1,33 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using NetGoLynx.Models;
 
 namespace NetGoLynx.Controllers
 {
-	public class HomeController : Controller
-	{
-		[HttpGet]
-		[Route("")]
-		public IActionResult Index()
-		{
-			return View();
-		}
+    public class HomeController : Controller
+    {
+        [HttpGet]
+        [Route("")]
+        public IActionResult Index()
+        {
+            return View();
+        }
 
-		[HttpGet]
-		[Route("{*url}")]
-		public IActionResult Resolve(string url)
-		{
-			return Content($"Request: {url}");
-		}
+        [HttpGet]
+        [Route("{*url}")]
+        public IActionResult Resolve(string url)
+        {
+            return Content($"Request: {url}");
+        }
 
-		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-		public IActionResult Error()
-		{
-			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-		}
-	}
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+    }
 }
