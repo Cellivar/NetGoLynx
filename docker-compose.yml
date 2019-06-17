@@ -1,0 +1,18 @@
+version: "3.4"
+
+services:
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: netgolynx
+      POSTGRES_PASSWORD: d0n0tus3m31npr0duc71on!
+  app:
+    build: ./NetGoLynx
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - db
