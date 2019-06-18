@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -76,7 +75,7 @@ namespace NetGoLynx.Controllers
 
         internal async Task<(Redirect Redirect, OperationResult Result)> TryCreateRedirectAsync(Redirect redirect)
         {
-            if (RedirectExists(redirect.Name))
+            if (await RedirectExistsAsync(redirect.Name))
             {
                 return (null, OperationResult.Conflict);
             }
@@ -102,14 +101,14 @@ namespace NetGoLynx.Controllers
             return redirect;
         }
 
-        private bool RedirectExists(int id)
+        internal async Task<bool> RedirectExistsAsync(int id)
         {
-            return _context.Redirects.Any(e => e.RedirectId == id);
+            return await _context.Redirects.AnyAsync(e => e.RedirectId == id);
         }
 
-        private bool RedirectExists(string name)
+        internal async Task<bool> RedirectExistsAsync(string name)
         {
-            return _context.Redirects.Any(r => r.Name == name);
+            return await _context.Redirects.AnyAsync(r => r.Name == name);
         }
 
         public enum OperationResult

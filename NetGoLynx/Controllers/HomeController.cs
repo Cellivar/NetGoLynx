@@ -37,6 +37,12 @@ namespace NetGoLynx.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddLink(NewRedirectModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                model.ErrorMessage = "Invalid options, confirm form validation";
+                return View("Add", model);
+            }
+
             var redirect = new Redirect()
             {
                 Name = model.LinkName,
