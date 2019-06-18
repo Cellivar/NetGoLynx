@@ -22,7 +22,7 @@
         @foreach (var redirect in Model.Redirects)
         {
             <tr>
-                <td>
+                <td id="rdr-@redirect.RedirectId">
                     @Html.DisplayFor(m => redirect.RedirectId)
                 </td>
                 <td>
@@ -35,3 +35,13 @@
         }
     </tbody>
 </table>
+@if (Model.HighlightRedirectId != -1)
+{
+    <script>
+        $(function () {
+            $('html, body').animate({
+                scrollTop: $('#rdr-@Model.HighlightRedirectId').offset().top
+            }, 1000);
+        });
+    </script>
+}
