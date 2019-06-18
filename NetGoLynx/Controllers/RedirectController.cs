@@ -24,7 +24,6 @@ namespace NetGoLynx.Controllers
             return await _context.Redirects.ToListAsync();
         }
 
-        // GET: netgolynxapi/Test/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Redirect>> GetRedirect(int id)
         {
@@ -62,47 +61,32 @@ namespace NetGoLynx.Controllers
                 .FirstOrDefaultAsync(r => r.Name == name);
         }
 
-        // PUT: netgolynxapi/Test/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutRedirect(int id, Redirect redirect)
-        {
-            if (id != redirect.RedirectId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(redirect).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RedirectExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: netgolynxapi/Test
         [HttpPost]
         public async Task<ActionResult<Redirect>> PostRedirect(Redirect redirect)
         {
+            var result = await TryCreateRedirectAsync(redirect);
+
+            if (result.Result == OperationResult.Conflict)
+            {
+                return StatusCode(409, new { message = "Redirect name already exists." });
+            }
+
+            return CreatedAtAction("GetRedirect", new { id = result.Redirect.RedirectId }, result.Redirect);
+        }
+
+        internal async Task<(Redirect Redirect, OperationResult Result)> TryCreateRedirectAsync(Redirect redirect)
+        {
+            if (RedirectExists(redirect.Name))
+            {
+                return (null, OperationResult.Conflict);
+            }
+
             _context.Redirects.Add(redirect);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetRedirect", new { id = redirect.RedirectId }, redirect);
+            return (redirect, OperationResult.Success);
         }
 
-        // DELETE: netgolynxapi/Test/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Redirect>> DeleteRedirect(int id)
         {
@@ -121,6 +105,17 @@ namespace NetGoLynx.Controllers
         private bool RedirectExists(int id)
         {
             return _context.Redirects.Any(e => e.RedirectId == id);
+        }
+
+        private bool RedirectExists(string name)
+        {
+            return _context.Redirects.Any(r => r.Name == name);
+        }
+
+        public enum OperationResult
+        {
+            Success,
+            Conflict,
         }
     }
 }

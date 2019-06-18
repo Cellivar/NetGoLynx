@@ -1,18 +1,47 @@
-﻿@model NetGoLynx.Models.IndexModel
+﻿@model NetGoLynx.Models.NewRedirectModel
 @{
     ViewData["Title"] = "Add Golink";
 }
 
-<div class="text-center">
-    @if (!string.IsNullOrEmpty(Model.LinkName))
-    {
+<div class="row">
+    <div class="col text-center jumbotron">
 
-        <h1 class="display-4">Link not found :(</h1>
-        <p>Perhaps you wanted to add @Model.LinkName as a new link?</p>
-    }
-    else
-    {
-        <h1 class="display-4">Add a link</h1>
-    }
-
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <h1 class="display-4">Failed to create link :(</h1>
+            <p>@Model.ErrorMessage</p>
+        }
+        else if (!string.IsNullOrEmpty(Model.LinkName))
+        {
+            <h1 class="display-4">Link not found :(</h1>
+            <p>Perhaps you want to add @Model.LinkName as a new link?</p>
+        }
+        else
+        {
+            <h1 class="display-4">Add a link</h1>
+        }
+    </div>
+</div>
+<div class="row">
+    <div class="col"></div>
+    <div class="col-8">
+        <form asp-controller="Home" asp-action="AddLink" method="post">
+            <div class="form-group row justify-content-center">
+                <label class="col-sm-2 col-form-label-lg text-right" for="LinkName">go /</label>
+                <div class="col-sm-5">
+                    <input asp-for="LinkName" class="form-control form-control-lg" placeholder="shortcut" />
+                </div>
+            </div>
+            <div class="form-group row justify-content-center">
+                <label class="col-1 col-form-label" form="Target">to :</label>
+                <div class="col-11">
+                    <input asp-for="Target" class="form-control" placeholder="url" />
+                </div>
+            </div>
+            <div class="form-group row justify-content-center">
+                <button type="submit" class="btn btn-primary btn-lg btn-block">Create!</button>
+            </div>
+        </form>
+    </div>
+    <div class="col"></div>
 </div>
