@@ -8,9 +8,6 @@
     <thead>
         <tr>
             <td>
-                @Html.DisplayNameFor(m => m.Redirects.FirstOrDefault().RedirectId)
-            </td>
-            <td>
                 @Html.DisplayNameFor(m => m.Redirects.FirstOrDefault().Name)
             </td>
             <td>
@@ -24,15 +21,15 @@
     <tbody>
         @foreach (var redirect in Model.Redirects)
         {
-            <tr>
-                <td id="rdr-@redirect.RedirectId">
-                    @Html.DisplayFor(m => redirect.RedirectId)
-                </td>
+            <tr id="rdr-@redirect.RedirectId">
                 <td>
-                    go/@Html.DisplayFor(m => redirect.Name) <svg height="15px" role="img" width="15px" viewBox="0 0 1024 896">
-                        <!--react-clipboard-icon from @@zenorocha.-->
-                        <path d='M128 768h256v64H128v-64z m320-384H128v64h320v-64z m128 192V448L384 640l192 192V704h320V576H576z m-288-64H128v64h160v-64zM128 704h160v-64H128v64z m576 64h64v128c-1 18-7 33-19 45s-27 18-45 19H64c-35 0-64-29-64-64V192c0-35 29-64 64-64h192C256 57 313 0 384 0s128 57 128 128h192c35 0 64 29 64 64v320h-64V320H64v576h640V768zM128 256h512c0-35-29-64-64-64h-64c-35 0-64-29-64-64s-29-64-64-64-64 29-64 64-29 64-64 64h-64c-35 0-64 29-64 64z' />
-                    </svg>
+                    <button class="btn btn-outline-info" onclick="copyToClipboard(@redirect.RedirectId)">
+                        <svg height="15px" role="img" width="15px" viewBox="0 0 1024 896" fill="#000000">
+                            <!--react-clipboard-icon from @@zenorocha.-->
+                            <path d='M128 768h256v64H128v-64z m320-384H128v64h320v-64z m128 192V448L384 640l192 192V704h320V576H576z m-288-64H128v64h160v-64zM128 704h160v-64H128v64z m576 64h64v128c-1 18-7 33-19 45s-27 18-45 19H64c-35 0-64-29-64-64V192c0-35 29-64 64-64h192C256 57 313 0 384 0s128 57 128 128h192c35 0 64 29 64 64v320h-64V320H64v576h640V768zM128 256h512c0-35-29-64-64-64h-64c-35 0-64-29-64-64s-29-64-64-64-64 29-64 64-29 64-64 64h-64c-35 0-64 29-64 64z' />
+                        </svg>
+                    </button>
+                    <span>go/@Html.DisplayFor(m => redirect.Name)</span><input id="lnk-@redirect.RedirectId" type="text" style="display:none" value="go/@redirect.Name" />
                 </td>
                 <td>
                     <a href="@redirect.Target">@Html.DisplayFor(m => redirect.Target)</a>
@@ -54,3 +51,10 @@
         });
     </script>
 }
+<script>
+
+    function copyToClipboard(redirectId) {
+        var copyText = document.querySelector("#lnk-" + redirectId).value;
+        navigator.clipboard.writeText(copyText);
+    }
+</script>
