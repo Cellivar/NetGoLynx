@@ -1,4 +1,6 @@
-﻿namespace NetGoLynx.Models
+﻿using System.ComponentModel;
+
+namespace NetGoLynx.Models
 {
     /// <summary>
     /// Information for a redirection
@@ -8,6 +10,7 @@
         /// <summary>
         /// The unique ID of this redirect
         /// </summary>
+        [DisplayName("ID")]
         public int RedirectId { get; set; }
 
         /// <summary>
