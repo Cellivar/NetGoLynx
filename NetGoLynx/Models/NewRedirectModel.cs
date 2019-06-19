@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace NetGoLynx.Models
 {
@@ -18,8 +17,8 @@ namespace NetGoLynx.Models
         public string LinkName { get; set; }
 
         [Required(ErrorMessage = "Link target is required")]
-        [RegularExpression("^https?://", ErrorMessage = "Link must start with http:// or https://")]
-        public Uri Target { get; set; }
+        [Url(ErrorMessage = "Link must be a valid URL")]
+        public string Target { get; set; }
 
         public string ErrorMessage { get; set; }
     }
