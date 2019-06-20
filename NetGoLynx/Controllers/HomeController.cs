@@ -25,6 +25,8 @@ namespace NetGoLynx.Controllers
             {
                 case Operation.Add:
                     return View("Add", new NewRedirectModel(suggestedLinkName));
+                case Operation.Delete:
+                    return View("Delete", new IndexModel(id: id, suggestedLinkName: suggestedLinkName));
                 default:
                 case Operation.List:
                     var redirects = await _redirectController.GetRedirectEntriesAsync();

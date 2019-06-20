@@ -89,16 +89,29 @@ namespace NetGoLynx.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Redirect>> DeleteRedirect(int id)
         {
+            var result = await DeleteRedirectEntry(id);
+            switch (result.Result)
+            {
+                case OperationResult.NotFound:
+                    return NotFound();
+                case OperationResult.Success:
+                default:
+                    return result.Redirect;
+            }
+        }
+
+        internal async Task<(Redirect Redirect, OperationResult Result)> DeleteRedirectEntry(int id)
+        {
             var redirect = await _context.Redirects.FindAsync(id);
             if (redirect == null)
             {
-                return NotFound();
+                return (null, OperationResult.NotFound);
             }
 
             _context.Redirects.Remove(redirect);
             await _context.SaveChangesAsync();
 
-            return redirect;
+            return (redirect, OperationResult.Success);
         }
 
         internal async Task<bool> RedirectExistsAsync(int id)
@@ -115,6 +128,7 @@ namespace NetGoLynx.Controllers
         {
             Success,
             Conflict,
+            NotFound,
         }
     }
 }

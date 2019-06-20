@@ -1,0 +1,43 @@
+﻿@model NetGoLynx.Models.IndexModel
+@{
+    ViewData["Title"] = "Delete Golink";
+}
+
+<div class="row">
+    <div class="col text-center jumbotron">
+        <h1 class="display-4">Deleting  &#x1F63E;</h1>
+        <h2 class="display-3">go/@Model.LinkName</h2>
+        <p>Are you sure?</p>
+    </div>
+</div>
+<div class="row">
+    <div class="col"></div>
+    <div class="col-8">
+        <form asp-controller="Home" asp-action="DeleteLink" method="DELETE">
+            <input asp-for="HighlightRedirectId" style="display:none" />
+            <div class="form-group row justify-content-center text-center">
+                <div class="col-6">
+                    <button type="submit" class="btn btn-danger btn-lg btn-block">Delete</button>
+                </div>
+                <div class="col-6">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary btn-lg btn-block">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col"></div>
+</div>
+@section scripts{
+<script>
+    document.forms[0].onsubmit = () => {
+        let formData = new FormData(document.forms[0]);
+        fetch("/netgolynxapi/redirect/" + formData.get("HighlightRedirectId"), {
+            method: 'delete'
+        })
+            .then(() => {
+                document.location.href = "/"
+            });
+        return false;
+    };
+</script>
+}

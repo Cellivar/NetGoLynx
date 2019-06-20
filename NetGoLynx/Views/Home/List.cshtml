@@ -16,6 +16,7 @@
             <td>
                 @Html.DisplayNameFor(m => m.Redirects.FirstOrDefault().Description)
             </td>
+            <td></td>
         </tr>
     </thead>
     <tbody>
@@ -36,6 +37,17 @@
                 </td>
                 <td>
                     @Html.DisplayFor(m => redirect.Description)
+                </td>
+                <td class="text-center">
+                    @{
+                        var deleteRouteData = new Dictionary<string, string>
+                                    {
+                    { "op", "Delete" },
+                    { "suggestedLinkName", redirect.Name },
+                    { "id", redirect.RedirectId.ToString() }
+                    };
+                    }
+                    <a asp-controller="Home" asp-action="Index" asp-all-route-data="deleteRouteData" class="btn btn-outline-danger">&#x274C;</a>
                 </td>
             </tr>
         }
