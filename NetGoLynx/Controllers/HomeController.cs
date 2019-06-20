@@ -43,11 +43,7 @@ namespace NetGoLynx.Controllers
                 return View("Add", model);
             }
 
-            var redirect = new Redirect()
-            {
-                Name = model.LinkName,
-                Target = model.Target.ToString()
-            };
+            var redirect = model.ToRedirect();
 
             var result = await _redirectController.TryCreateRedirectAsync(redirect);
             switch (result.Result)
