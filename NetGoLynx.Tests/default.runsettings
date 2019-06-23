@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <Format>json</Format>
+          <MergeWith>/custom/path/result.json</MergeWith>
+          <Exclude>[coverlet.*.tests?]*,[*]Coverlet.Core*</Exclude>
+          <Include>[coverlet.*]*,[*]Coverlet.Core*</Include>
+          <ExcludeByAttribute>Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute</ExcludeByAttribute>
+          <ExcludeByFile>../dir1/class1.cs,../dir2/*.cs,../dir3/**/*.cs,</ExcludeByFile>
+          <IncludeDirectory>../dir1/,../dir2/,</IncludeDirectory>
+          <SingleHit>false</SingleHit>
+          <UseSourceLink>true</UseSourceLink>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
