@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NetGoLynx.Models;
+using NetGoLynx.Models.Home;
 
 namespace NetGoLynx.Controllers
 {
@@ -24,20 +25,20 @@ namespace NetGoLynx.Controllers
             switch (op)
             {
                 case Operation.Add:
-                    return View("Add", new NewRedirectModel(suggestedLinkName));
+                    return View("Add", new AddModel(suggestedLinkName));
                 case Operation.Delete:
-                    return View("Delete", new IndexModel(id: id, suggestedLinkName: suggestedLinkName));
+                    return View("Delete", new ListModel(id: id, name: suggestedLinkName));
                 default:
                 case Operation.List:
                     var redirects = await _redirectController.GetRedirectEntriesAsync();
-                    return View("List", new IndexModel(redirects: redirects, id: id));
+                    return View("List", new ListModel(redirects: redirects, id: id));
             }
         }
 
         [HttpPost]
         [Route("")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddLink(NewRedirectModel model)
+        public async Task<IActionResult> AddLink(AddModel model)
         {
             if (!ModelState.IsValid)
             {

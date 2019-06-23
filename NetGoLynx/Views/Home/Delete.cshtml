@@ -1,4 +1,4 @@
-﻿@model NetGoLynx.Models.IndexModel
+﻿@model NetGoLynx.Models.Home.ListModel
 @{
     ViewData["Title"] = "Delete Golink";
 }
@@ -6,7 +6,7 @@
 <div class="row">
     <div class="col text-center jumbotron">
         <h1 class="display-4">Deleting  &#x1F63E;</h1>
-        <h2 class="display-3">go/@Model.LinkName</h2>
+        <h2 class="display-3">go/@Model.HighlightRedirectName</h2>
         <p>Are you sure?</p>
     </div>
 </div>
@@ -28,16 +28,16 @@
     <div class="col"></div>
 </div>
 @section scripts{
-<script>
-    document.forms[0].onsubmit = () => {
-        let formData = new FormData(document.forms[0]);
-        fetch("/netgolynxapi/redirect/" + formData.get("HighlightRedirectId"), {
-            method: 'delete'
-        })
-            .then(() => {
-                document.location.href = "/"
-            });
-        return false;
-    };
-</script>
+    <script>
+        document.forms[0].onsubmit = () => {
+            let formData = new FormData(document.forms[0]);
+            fetch("/netgolynxapi/redirect/" + formData.get("HighlightRedirectId"), {
+                method: 'delete'
+            })
+                .then(() => {
+                    document.location.href = "/"
+                });
+            return false;
+        };
+    </script>
 }

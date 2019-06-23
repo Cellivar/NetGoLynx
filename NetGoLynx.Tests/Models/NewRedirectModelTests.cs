@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NetGoLynx.Models;
+using NetGoLynx.Models.Home;
 
 namespace NetGoLynx.Tests.Models
 {
@@ -23,7 +23,7 @@ namespace NetGoLynx.Tests.Models
         [DataRow("Valid\uD83E\uDD8AName")]
         public void LinkNameIsValid(string name)
         {
-            var model = new NewRedirectModel(name)
+            var model = new AddModel(name)
             {
                 Target = "https://valid.target"
             };
@@ -39,7 +39,7 @@ namespace NetGoLynx.Tests.Models
         [DataRow("12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890")]
         public void LinkNameIsNotValid(string name)
         {
-            var model = new NewRedirectModel(name)
+            var model = new AddModel(name)
             {
                 Target = "https://valid.target"
             };
@@ -51,7 +51,7 @@ namespace NetGoLynx.Tests.Models
         [TestMethod]
         public void TestMethod1()
         {
-            var model = new NewRedirectModel()
+            var model = new AddModel()
             {
                 LinkName = "Name",
                 Description = "Description",

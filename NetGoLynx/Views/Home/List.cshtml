@@ -1,4 +1,4 @@
-﻿@model NetGoLynx.Models.IndexModel
+﻿@model NetGoLynx.Models.Home.ListModel
 @{
     ViewData["Title"] = "All Golinks";
 }
@@ -41,7 +41,7 @@
                 <td class="text-center">
                     @{
                         var deleteRouteData = new Dictionary<string, string>
-                                    {
+                                            {
                     { "op", "Delete" },
                     { "suggestedLinkName", redirect.Name },
                     { "id", redirect.RedirectId.ToString() }
