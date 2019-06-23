@@ -9,16 +9,32 @@ using NetGoLynx.Data;
 
 namespace NetGoLynx
 {
+    /// <summary>
+    /// Startup configuration class.
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Startup"/> class.
+        /// </summary>
+        /// <param name="configuration"></param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
+        /// <summary>
+        /// Gets the configuration object.
+        /// </summary>
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// Configures the available services.
+        /// </summary>
+        /// <param name="services">The service collection to add services to.</param>
+        /// <remarks>
+        /// This method gets called by the runtime. Use this method to add services to the container.
+        /// </remarks>
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<CookiePolicyOptions>(options =>
@@ -40,7 +56,14 @@ namespace NetGoLynx
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// Configures the internal application configuration.
+        /// </summary>
+        /// <param name="app">The app builder to configure.</param>
+        /// <param name="env">The environment information to use.</param>
+        /// <remarks>
+        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// </remarks>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())

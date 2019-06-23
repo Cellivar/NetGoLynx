@@ -6,15 +6,29 @@ using NetGoLynx.Models.Home;
 
 namespace NetGoLynx.Controllers
 {
+    /// <summary>
+    /// Primary controller for handling web-based application interation.
+    /// </summary>
     public class HomeController : Controller
     {
         private readonly RedirectController _redirectController;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HomeController"/> class.
+        /// </summary>
+        /// <param name="redirectController"></param>
         public HomeController(RedirectController redirectController)
         {
             _redirectController = redirectController;
         }
 
+        /// <summary>
+        /// Handler for web view interactions.
+        /// </summary>
+        /// <param name="op">The requested operation.</param>
+        /// <param name="suggestedLinkName">A redirect name to suggest.</param>
+        /// <param name="id">A redirect ID to highlight.</param>
+        /// <returns></returns>
         [HttpGet]
         [Route("")]
         public async Task<IActionResult> Index(
@@ -35,6 +49,11 @@ namespace NetGoLynx.Controllers
             }
         }
 
+        /// <summary>
+        /// Handler for requesting a new link.
+        /// </summary>
+        /// <param name="model">The <see cref="AddModel"/> object to use. Must be valid.</param>
+        /// <returns>A view with the result of the add operation.</returns>
         [HttpPost]
         [Route("")]
         [ValidateAntiForgeryToken]
@@ -62,6 +81,11 @@ namespace NetGoLynx.Controllers
             }
         }
 
+        /// <summary>
+        /// Resolve a redirect request.
+        /// </summary>
+        /// <param name="name">The name of the redirect to resolve.</param>
+        /// <returns>A 302 redirect to the target URL for that redirect name, or an error.</returns>
         [HttpGet]
         [Route("{*name}")]
         public async Task<IActionResult> ResolveAsync(string name)
@@ -76,16 +100,34 @@ namespace NetGoLynx.Controllers
             return Redirect(redirect.Target);
         }
 
+        /// <summary>
+        /// Handle error pages.
+        /// </summary>
+        /// <returns>An error view.</returns>
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        /// <summary>
+        /// Types of request operations.
+        /// </summary>
         public enum Operation
         {
+            /// <summary>
+            /// List redirects
+            /// </summary>
             List,
+
+            /// <summary>
+            /// Add a redirect
+            /// </summary>
             Add,
+
+            /// <summary>
+            /// Delete a redirect
+            /// </summary>
             Delete,
         }
     }
