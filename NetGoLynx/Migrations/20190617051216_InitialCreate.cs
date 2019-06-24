@@ -2,6 +2,7 @@
 
 namespace NetGoLynx.Migrations
 {
+#pragma warning disable 1591
     public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -27,4 +28,5 @@ namespace NetGoLynx.Migrations
                 name: "Redirects");
         }
     }
+#pragma warning restore 1591
 }

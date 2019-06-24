@@ -27,9 +27,9 @@ namespace NetGoLynx.Tests.Models
             {
                 Target = "https://valid.target"
             };
-            var result = TryValidate(model);
+            var (IsValid, _) = TryValidate(model);
 
-            Assert.IsTrue(result.IsValid);
+            Assert.IsTrue(IsValid);
         }
 
         [DataTestMethod]
@@ -43,9 +43,9 @@ namespace NetGoLynx.Tests.Models
             {
                 Target = "https://valid.target"
             };
-            var result = TryValidate(model);
+            var (IsValid, _) = TryValidate(model);
 
-            Assert.IsFalse(result.IsValid);
+            Assert.IsFalse(IsValid);
         }
 
         [TestMethod]

@@ -2,6 +2,7 @@
 
 namespace NetGoLynx.Migrations
 {
+#pragma warning disable 1591
     public partial class AddKeyToRedirect : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,4 +20,5 @@ namespace NetGoLynx.Migrations
                 table: "Redirects");
         }
     }
+#pragma warning restore 1591
 }

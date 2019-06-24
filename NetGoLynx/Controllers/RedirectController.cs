@@ -7,12 +7,19 @@ using NetGoLynx.Models;
 
 namespace NetGoLynx.Controllers
 {
+    /// <summary>
+    /// Controller for managing redirect objects.
+    /// </summary>
     [Route("netgolynxapi/[controller]")]
     [ApiController]
     public class RedirectController : ControllerBase
     {
         private readonly RedirectContext _context;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RedirectController"/> class.
+        /// </summary>
+        /// <param name="context">The redirect context to use.</param>
         public RedirectController(RedirectContext context)
         {
             _context = context;
@@ -23,6 +30,11 @@ namespace NetGoLynx.Controllers
             return await _context.Redirects.ToListAsync();
         }
 
+        /// <summary>
+        /// Get an individual redirect by Id.
+        /// </summary>
+        /// <param name="id">The Id of the redirect to lookup.</param>
+        /// <returns>The corresponding redirect, or an error.</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<Redirect>> GetRedirect(int id)
         {
@@ -36,6 +48,11 @@ namespace NetGoLynx.Controllers
             return redirect;
         }
 
+        /// <summary>
+        /// Get an individual redirect by name.
+        /// </summary>
+        /// <param name="name">The name of the redirect to lookup.</param>
+        /// <returns>The corresponding redirect, or an error.</returns>
         [HttpGet("{name}")]
         public async Task<ActionResult<Redirect>> GetRedirect(string name)
         {
@@ -60,6 +77,11 @@ namespace NetGoLynx.Controllers
                 .FirstOrDefaultAsync(r => r.Name == name);
         }
 
+        /// <summary>
+        /// Createa a new redirect.
+        /// </summary>
+        /// <param name="redirect">The redirect to create.</param>
+        /// <returns>The new redirect that was created.</returns>
         [HttpPost]
         public async Task<ActionResult<Redirect>> PostRedirect(Redirect redirect)
         {
@@ -86,6 +108,11 @@ namespace NetGoLynx.Controllers
             return (redirect, OperationResult.Success);
         }
 
+        /// <summary>
+        /// Delete a redirect by its Id.
+        /// </summary>
+        /// <param name="id">The Id of the redirect to delete.</param>
+        /// <returns>The redirect that was deleted, or an error.</returns>
         [HttpDelete("{id}")]
         public async Task<ActionResult<Redirect>> DeleteRedirect(int id)
         {
@@ -124,10 +151,24 @@ namespace NetGoLynx.Controllers
             return await _context.Redirects.AnyAsync(r => r.Name == name);
         }
 
+        /// <summary>
+        /// The result of an operation.
+        /// </summary>
         public enum OperationResult
         {
+            /// <summary>
+            /// The operation succeeded
+            /// </summary>
             Success,
+
+            /// <summary>
+            /// The operation failed due to an existing item conflict
+            /// </summary>
             Conflict,
+
+            /// <summary>
+            /// The operation failed due to not finding an item
+            /// </summary>
             NotFound,
         }
     }

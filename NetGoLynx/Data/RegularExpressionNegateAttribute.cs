@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace NetGoLynx.Data
 {
+    /// <summary>
+    /// Attribute that fails validation if the supplied regex has a match.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
     public class RegularExpressionNegateAttribute : RegularExpressionAttribute
     {
@@ -28,6 +31,11 @@ namespace NetGoLynx.Data
             return !result;
         }
 
+        /// <summary>
+        /// Gets the formatted error message if this element fails validation.
+        /// </summary>
+        /// <param name="name">The name of the rule that failed.</param>
+        /// <returns>The formatted error message.</returns>
         public override string FormatErrorMessage(string name)
         {
             return ErrorMessage;
