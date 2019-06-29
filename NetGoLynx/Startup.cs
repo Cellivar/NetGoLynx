@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -54,6 +55,17 @@ namespace NetGoLynx
 
             services.AddDbContext<RedirectContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+
+
+            var dbOptions = services.BuildServiceProvider().GetRequiredService<DbContextOptions<RedirectContext>>();
+            // Kick off an the database context load
+            Task.Run(() =>
+            {
+                using (var context = new RedirectContext(dbOptions))
+                {
+                    var warmup = context.Redirects.FirstOrDefaultAsync();
+                }
+            });
         }
 
         /// <summary>

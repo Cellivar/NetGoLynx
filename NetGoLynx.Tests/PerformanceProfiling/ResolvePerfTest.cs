@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NetGoLynx.Controllers;
@@ -12,6 +11,7 @@ namespace NetGoLynx.Tests.PerformanceProfiling
     [TestClass]
     public class ResolvePerfTest
     {
+
         private TimeSpan Time(Action toTime)
         {
             var timer = Stopwatch.StartNew();
@@ -20,42 +20,62 @@ namespace NetGoLynx.Tests.PerformanceProfiling
             return timer.Elapsed;
         }
 
+        private int _redirectCount;
+
+        private int RedirectCount
+        {
+            get
+            {
+                _redirectCount++;
+                return _redirectCount;
+            }
+        }
+
+        public TestContext TestContext { get; set; }
+
         private Redirect GetValidRedirect()
         {
+            var count = RedirectCount;
             return new Redirect()
             {
-                Description = "This is a test valid redirect object",
-                Name = "test_redirect",
-                Target = "https://google.com"
+                Description = "This is a test valid redirect object " + count,
+                Name = "test_redirect" + count,
+                Target = "https://google.com/search?q=" + count
             };
         }
 
         [TestMethod]
-        public async Task ConfirmResolutionTimeBelowPerfThreshold()
+        public void ConfirmResolutionTimeBelowPerfThreshold()
         {
             var dbOps = new DbContextOptionsBuilder<RedirectContext>()
                 .UseInMemoryDatabase(databaseName: "Perf_test_resolver")
                 .Options;
 
-            var testRedirect = GetValidRedirect();
+            var redirect1 = GetValidRedirect();
+            var redirect2 = GetValidRedirect();
 
             using (var context = new RedirectContext(dbOps))
             {
-                context.Add(testRedirect);
+                context.Add(redirect1);
+                context.Add(redirect2);
                 context.SaveChanges();
-            }
 
-            // New context to avoid performance interactions.
-            using (var context = new RedirectContext(dbOps))
-            {
+                var warmupTimer = Stopwatch.StartNew();
+                // Warm up the database model. Assert to make sure it doesn't get optimized out.
+                var model = context.Redirects.FirstOrDefaultAsync();
+                warmupTimer.Stop();
+                Assert.IsNotNull(model, "Failed to warm up context??");
+                TestContext.WriteLine($"Warmup call took {warmupTimer.ElapsedMilliseconds}ms");
+
                 var redirectController = new RedirectController(context);
 
                 var timer = Stopwatch.StartNew();
-                var result = redirectController.GetRedirectEntry(testRedirect.Name).Result;
+                var result = redirectController.GetRedirectEntry(redirect2.Name).Result;
                 timer.Stop();
 
-                Assert.AreEqual(testRedirect.Target, result.Target, "Acquired entry is not correct??");
+                Assert.AreEqual(redirect2.Target, result.Target, "Acquired entry is not correct??");
                 Assert.IsTrue(timer.ElapsedMilliseconds < 250, $"Target resolution time was too slow at {timer.ElapsedMilliseconds}ms.");
+                TestContext.WriteLine($"Test call took {timer.ElapsedMilliseconds}ms");
             }
         }
     }
