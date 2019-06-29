@@ -1,6 +1,8 @@
 ﻿using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 [assembly: InternalsVisibleTo("NetGoLynx.Tests")]
 
@@ -17,7 +19,16 @@ namespace NetGoLynx
         /// <param name="args">Arguments list</param>
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            var host = CreateWebHostBuilder(args).Build();
+
+            using (var scope = host.Services.CreateScope())
+            {
+                // Ensure the database is up to date
+                var context = scope.ServiceProvider.GetRequiredService<Data.RedirectContext>();
+                context.Database.Migrate();
+            }
+
+            host.Run();
         }
 
         /// <summary>
