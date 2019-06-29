@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore;
+﻿using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+
+[assembly: InternalsVisibleTo("NetGoLynx.Tests")]
 
 namespace NetGoLynx
 {
