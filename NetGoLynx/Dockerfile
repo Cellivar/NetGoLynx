@@ -5,10 +5,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
 WORKDIR /src
-COPY ["NetGoLynx.csproj", "."]
-RUN dotnet restore "NetGoLynx.csproj"
+COPY ["NetGoLynx/NetGoLynx.csproj", "NetGoLynx/"]
+RUN dotnet restore "NetGoLynx/NetGoLynx.csproj"
 COPY . .
-WORKDIR "/src"
+WORKDIR "/src/NetGoLynx"
 RUN dotnet build "NetGoLynx.csproj" -c Release -o /app
 
 FROM build AS publish
