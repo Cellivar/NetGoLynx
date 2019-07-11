@@ -20,6 +20,14 @@ namespace NetGoLynx.Tests.PerformanceProfiling
             return timer.Elapsed;
         }
 
+        private (TimeSpan Time, TResult Result) Time<TResult>(Func<TResult> toTime)
+        {
+            var timer = Stopwatch.StartNew();
+            var result = toTime();
+            timer.Stop();
+            return (timer.Elapsed, result);
+        }
+
         private int _redirectCount;
 
         private int RedirectCount
@@ -60,22 +68,46 @@ namespace NetGoLynx.Tests.PerformanceProfiling
                 context.Add(redirect2);
                 context.SaveChanges();
 
-                var warmupTimer = Stopwatch.StartNew();
                 // Warm up the database model. Assert to make sure it doesn't get optimized out.
-                var model = context.Redirects.FirstOrDefaultAsync();
-                warmupTimer.Stop();
+                var (warmup, model) = Time(() => context.Redirects.FirstOrDefaultAsync());
                 Assert.IsNotNull(model, "Failed to warm up context??");
-                TestContext.WriteLine($"Warmup call took {warmupTimer.ElapsedMilliseconds}ms");
+                TestContext.WriteLine($"Warmup call took {warmup.TotalMilliseconds}ms");
 
                 var redirectController = new RedirectController(context);
 
-                var timer = Stopwatch.StartNew();
-                var result = redirectController.GetRedirectEntry(redirect2.Name).Result;
-                timer.Stop();
+                var (timer, result) = Time(() => redirectController.GetRedirectEntry(redirect2.Name).Result);
 
                 Assert.AreEqual(redirect2.Target, result.Target, "Acquired entry is not correct??");
-                Assert.IsTrue(timer.ElapsedMilliseconds < 250, $"Target resolution time was too slow at {timer.ElapsedMilliseconds}ms.");
-                TestContext.WriteLine($"Test call took {timer.ElapsedMilliseconds}ms");
+                Assert.IsTrue(timer.TotalMilliseconds < 250, $"Target resolution time was too slow at {timer.TotalMilliseconds}ms.");
+                TestContext.WriteLine($"Test call took {timer.TotalMilliseconds}ms");
+            }
+        }
+
+        [TestMethod]
+        public void ConfirmRepeatResolutionTimeBelowPerfThreshold()
+        {
+            var dbOps = new DbContextOptionsBuilder<RedirectContext>()
+                .UseInMemoryDatabase(databaseName: "Perf_test_repeat_resolver")
+                .Options;
+
+            var redirect1 = GetValidRedirect();
+
+            using (var context = new RedirectContext(dbOps))
+            {
+                context.Add(redirect1);
+                context.SaveChanges();
+
+                var redirectController = new RedirectController(context);
+
+                var (warmup, model) = Time(() => redirectController.GetRedirectEntry(redirect1.Name).Result);
+                Assert.IsNotNull(model, "Failed to warm up context??");
+                TestContext.WriteLine($"Warmup call took {warmup.TotalMilliseconds}ms");
+
+                var (timer, result) = Time(() => redirectController.GetRedirectEntry(redirect1.Name).Result);
+
+                Assert.AreEqual(redirect1.Target, result.Target, "Acquired entry is not correct??");
+                Assert.IsTrue(timer.TotalMilliseconds < 5, $"Target resolution time was too slow at {timer.TotalMilliseconds}ms.");
+                TestContext.WriteLine($"Test call took {timer.TotalMilliseconds}ms");
             }
         }
     }
