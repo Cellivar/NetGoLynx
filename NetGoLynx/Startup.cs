@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NetGoLynx.Data;
+using NetGoLynx.Models.Configuration.Authentication;
 using Newtonsoft.Json.Linq;
 
 namespace NetGoLynx
@@ -51,7 +52,6 @@ namespace NetGoLynx
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
             services
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
@@ -62,25 +62,33 @@ namespace NetGoLynx
             services.AddDbContext<RedirectContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddAuthentication()
-                .AddGoogle(options =>
-                {
-                    var googleAuthNSection = Configuration.GetSection("Authentication:Google");
+            // Conditionally chain together calls to add auth providers.
+            var auth = services.AddAuthentication();
 
-                    options.ClientId = googleAuthNSection["ClientId"];
-                    options.ClientSecret = googleAuthNSection["ClientSecret"];
-                })
-                .AddOAuth("GitHub", options =>
+            var googleConfig = Configuration.GetSection("Authentication:Google").Get<Google>();
+            if (googleConfig.Enabled)
+            {
+                auth = auth.AddGoogle(options =>
+                {
+                    options.ClientId = googleConfig.ClientId;
+                    options.ClientSecret = googleConfig.ClientSecret;
+                });
+            }
+
+            var githubConfig = Configuration.GetSection("Authentication:GitHub").Get<GitHub>();
+            if (githubConfig.Enabled)
+            {
+                auth = auth.AddOAuth("GitHub", options =>
                 {
                     var githubAuthNSection = Configuration.GetSection("Authentication:GitHub");
 
-                    options.ClientId = githubAuthNSection["ClientId"];
-                    options.ClientSecret = githubAuthNSection["ClientSecret"];
+                    options.ClientId = githubConfig.ClientId;
+                    options.ClientSecret = githubConfig.ClientSecret;
                     options.CallbackPath = new PathString("/signin-github");
 
-                    options.AuthorizationEndpoint = githubAuthNSection["AuthorizationEndpoint"];
-                    options.TokenEndpoint = githubAuthNSection["TokenEndpoint"];
-                    options.UserInformationEndpoint = githubAuthNSection["UserInformationEndpoint"];
+                    options.AuthorizationEndpoint = githubConfig.AuthorizationEndpoint;
+                    options.TokenEndpoint = githubConfig.TokenEndpoint;
+                    options.UserInformationEndpoint = githubConfig.UserInformationEndpoint;
 
                     options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
                     options.ClaimActions.MapJsonKey(ClaimTypes.Name, "name");
@@ -105,9 +113,10 @@ namespace NetGoLynx
                         }
                     };
                 });
-
+            }
 
             var dbOptions = services.BuildServiceProvider().GetRequiredService<DbContextOptions<RedirectContext>>();
+
             // Kick off an the database context load
             Task.Run(() =>
             {
