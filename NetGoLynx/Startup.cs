@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -57,6 +58,13 @@ namespace NetGoLynx
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddControllersAsServices();
 
+            services.AddApiVersioning(options =>
+            {
+                options.ApiVersionReader = new HeaderApiVersionReader("Api-Version");
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = new ApiVersion(new System.DateTime(2019, 07, 01));
+            });
+
             services.AddMemoryCache();
 
             services.AddDbContext<RedirectContext>(options =>
@@ -72,6 +80,7 @@ namespace NetGoLynx
                 {
                     options.ClientId = googleConfig.ClientId;
                     options.ClientSecret = googleConfig.ClientSecret;
+                    options.CallbackPath = new PathString("/_/account/signin-google");
                 });
             }
 
@@ -84,7 +93,7 @@ namespace NetGoLynx
 
                     options.ClientId = githubConfig.ClientId;
                     options.ClientSecret = githubConfig.ClientSecret;
-                    options.CallbackPath = new PathString("/signin-github");
+                    options.CallbackPath = new PathString("/_/account/signin-github");
 
                     options.AuthorizationEndpoint = githubConfig.AuthorizationEndpoint;
                     options.TokenEndpoint = githubConfig.TokenEndpoint;
@@ -153,12 +162,7 @@ namespace NetGoLynx
 
             app.UseAuthentication();
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}");
-            });
+            app.UseMvc();
         }
     }
 }

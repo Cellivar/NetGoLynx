@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace NetGoLynx.Models.Home
+namespace NetGoLynx.Models.RedirectModels
 {
     /// <summary>
     /// Model for listing redirects

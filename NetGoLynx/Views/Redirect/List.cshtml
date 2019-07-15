@@ -1,4 +1,4 @@
-﻿@model NetGoLynx.Models.Home.ListModel
+﻿@model NetGoLynx.Models.RedirectModels.ListModel
 @{
     ViewData["Title"] = "All Golinks";
 }
@@ -41,13 +41,11 @@
                 <td class="text-center">
                     @{
                         var deleteRouteData = new Dictionary<string, string>
-                                            {
-                    { "op", "Delete" },
-                    { "suggestedLinkName", redirect.Name },
-                    { "id", redirect.RedirectId.ToString() }
+                                                            {
+                    { "RedirectId", redirect.RedirectId.ToString() }
                     };
                     }
-                    <a asp-controller="Home" asp-action="Index" asp-all-route-data="deleteRouteData" class="btn btn-outline-danger">&#x274C;</a>
+                    <a asp-controller="Redirect" asp-action="DeleteAsync" asp-all-route-data="deleteRouteData" class="btn btn-outline-danger">&#x274C;</a>
                 </td>
             </tr>
         }

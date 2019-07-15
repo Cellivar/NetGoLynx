@@ -1,4 +1,4 @@
-﻿@model NetGoLynx.Models.Home.ListModel
+﻿@model NetGoLynx.Models.RedirectModels.RedirectMetadata
 @{
     ViewData["Title"] = "Delete Golink";
 }
@@ -6,7 +6,7 @@
 <div class="row">
     <div class="col text-center jumbotron">
         <h1 class="display-4">Deleting  &#x1F63E;</h1>
-        <h2 class="display-3">go/@Model.HighlightRedirectName</h2>
+        <h2 class="display-3">go/@Model.Name</h2>
         <p>Are you sure?</p>
     </div>
 </div>
@@ -14,7 +14,7 @@
     <div class="col"></div>
     <div class="col-8">
         <form asp-controller="Home" asp-action="DeleteLink" method="DELETE">
-            <input asp-for="HighlightRedirectId" style="display:none" />
+            <input asp-for="RedirectId" style="display:none" />
             <div class="form-group row justify-content-center text-center">
                 <div class="col-6">
                     <button type="submit" class="btn btn-danger btn-lg btn-block">Delete</button>
@@ -25,18 +25,18 @@
             </div>
         </form>
     </div>
-    <div class="col"></div>
+    <div class="col">@Url.RouteUrl(NetGoLynx.Controllers.Api.ApiRouteNames.RedirectDelete, new { id = Model.RedirectId })</div>
 </div>
 @section scripts{
     <script>
         document.forms[0].onsubmit = () => {
             let formData = new FormData(document.forms[0]);
-            fetch("/netgolynxapi/redirect/" + formData.get("HighlightRedirectId"), {
+            fetch("@Url.RouteUrl(NetGoLynx.Controllers.Api.ApiRouteNames.RedirectDelete, new { id = Model.RedirectId })", {
                 method: 'delete'
             })
-                .then(() => {
-                    document.location.href = "/"
-                });
+            .then(() => {
+                document.location.href = "@Url.Action("ListAsync", "Redirect")"
+            });
             return false;
         };
     </script>

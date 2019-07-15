@@ -73,7 +73,7 @@ namespace NetGoLynx.Tests.PerformanceProfiling
                 Assert.IsNotNull(model, "Failed to warm up context??");
                 TestContext.WriteLine($"Warmup call took {warmup.TotalMilliseconds}ms");
 
-                var redirectController = new RedirectController(context);
+                var redirectController = new RedirectApiController(context);
 
                 var (timer, result) = Time(() => redirectController.GetRedirectEntry(redirect2.Name).Result);
 
@@ -97,7 +97,7 @@ namespace NetGoLynx.Tests.PerformanceProfiling
                 context.Add(redirect1);
                 context.SaveChanges();
 
-                var redirectController = new RedirectController(context);
+                var redirectController = new RedirectApiController(context);
 
                 var (warmup, model) = Time(() => redirectController.GetRedirectEntry(redirect1.Name).Result);
                 Assert.IsNotNull(model, "Failed to warm up context??");

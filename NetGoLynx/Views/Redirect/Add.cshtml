@@ -1,4 +1,4 @@
-﻿@model NetGoLynx.Models.Home.AddModel
+﻿@model NetGoLynx.Models.RedirectModels.RedirectMetadata
 @{
     ViewData["Title"] = "Add Golink";
 }
@@ -11,10 +11,10 @@
             <h1 class="display-4">Failed to create link &#x1F63F;</h1>
             <p>@Model.ErrorMessage</p>
         }
-        else if (!string.IsNullOrEmpty(Model.LinkName))
+        else if (!string.IsNullOrEmpty(Model.Name))
         {
             <h1 class="display-4">Link not found &#x1F640;</h1>
-            <p>Perhaps you want to add @Model.LinkName as a new link?</p>
+            <p>Perhaps you want to add @Model.Name as a new link?</p>
         }
         else
         {
@@ -27,10 +27,10 @@
     <div class="col-8">
         <form asp-controller="Home" asp-action="AddLink" method="post">
             <div class="form-group row justify-content-center">
-                <label class="col-sm-2 col-form-label-lg text-right" for="LinkName">go /</label>
+                <label class="col-sm-2 col-form-label-lg text-right" for="Name">go /</label>
                 <div class="col-sm-5">
-                    <input asp-for="LinkName" class="form-control form-control-lg" placeholder="shortcut" />
-                    <span asp-validation-for="LinkName" class="text-danger"></span>
+                    <input asp-for="Name" class="form-control form-control-lg" placeholder="shortcut" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row justify-content-center">
