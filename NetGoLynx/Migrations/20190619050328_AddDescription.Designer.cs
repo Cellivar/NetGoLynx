@@ -2,11 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetGoLynx.Data;
 
 namespace NetGoLynx.Migrations
 {
+#pragma warning disable 1591
     [DbContext(typeof(RedirectContext))]
     [Migration("20190619050328_AddDescription")]
     partial class AddDescription
@@ -37,4 +37,5 @@ namespace NetGoLynx.Migrations
 #pragma warning restore 612, 618
         }
     }
+#pragma warning restore 1591
 }

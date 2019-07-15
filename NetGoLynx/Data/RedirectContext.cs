@@ -21,12 +21,19 @@ namespace NetGoLynx.Data
         public DbSet<Redirect> Redirects { get; set; }
 
         /// <summary>
+        /// Gets or sets the Accounts database object.
+        /// </summary>
+        public DbSet<Account> Accounts { get; set; }
+
+        /// <summary>
         /// Event fired when the data model is being created.
         /// </summary>
         /// <param name="modelBuilder">The model builder object being created.</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Redirect>()
+                .HasIndex(r => r.Name);
+            modelBuilder.Entity<Account>()
                 .HasIndex(r => r.Name);
         }
     }

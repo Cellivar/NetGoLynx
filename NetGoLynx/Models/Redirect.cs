@@ -35,5 +35,15 @@ namespace NetGoLynx.Models
         /// </summary>
         [StringLength(1024, ErrorMessage = "Length limit of 1024")]
         public string Description { get; set; }
+
+        /// <summary>
+        /// Gets or sets the AccountID of the owner account.
+        /// </summary>
+        public int AccountId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the account that owns this redirect.
+        /// </summary>
+        public Account Account { get; set; }
     }
 }
