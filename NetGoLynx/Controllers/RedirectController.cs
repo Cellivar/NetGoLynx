@@ -54,16 +54,25 @@ namespace NetGoLynx.Controllers
         }
 
         [HttpGet("delete")]
-        public async Task<IActionResult> DeleteAsync(RedirectMetadata model)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
             // Confirm the referenced ID is real
-            var redirect = await _redirectController.GetRedirect(model.RedirectId);
+            var redirect = await _redirectController.GetRedirect(id);
             if (redirect.Value == null)
             {
                 return BadRequest();
             }
 
             return View("Delete", new RedirectMetadata(redirect.Value));
+        }
+
+        [HttpPost("delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteAsync(RedirectMetadata model)
+        {
+            await _redirectController.DeleteRedirect(model.RedirectId);
+
+            return RedirectToAction("ListAsync");
         }
     }
 }

@@ -22,44 +22,44 @@
     <tbody>
         @foreach (var redirect in Model.Redirects)
         {
-            <tr id="rdr-@redirect.RedirectId">
-                <td>
-                    <button class="btn btn-outline-info" onclick="copyToClipboard(@redirect.RedirectId)">
-                        <svg height="15px" role="img" width="15px" viewBox="0 0 1024 896" fill="#000000">
-                            <!--react-clipboard-icon from @@zenorocha.-->
-                            <path d='M128 768h256v64H128v-64z m320-384H128v64h320v-64z m128 192V448L384 640l192 192V704h320V576H576z m-288-64H128v64h160v-64zM128 704h160v-64H128v64z m576 64h64v128c-1 18-7 33-19 45s-27 18-45 19H64c-35 0-64-29-64-64V192c0-35 29-64 64-64h192C256 57 313 0 384 0s128 57 128 128h192c35 0 64 29 64 64v320h-64V320H64v576h640V768zM128 256h512c0-35-29-64-64-64h-64c-35 0-64-29-64-64s-29-64-64-64-64 29-64 64-29 64-64 64h-64c-35 0-64 29-64 64z' />
-                        </svg>
-                    </button>
-                    <span>go/@Html.DisplayFor(m => redirect.Name)</span><input id="lnk-@redirect.RedirectId" type="text" style="display:none" value="go/@redirect.Name" />
-                </td>
-                <td>
-                    <a href="@redirect.Target">@Html.DisplayFor(m => redirect.Target)</a>
-                </td>
-                <td>
-                    @Html.DisplayFor(m => redirect.Description)
-                </td>
-                <td class="text-center">
-                    @{
-                        var deleteRouteData = new Dictionary<string, string>
-                                                            {
-                    { "RedirectId", redirect.RedirectId.ToString() }
+        <tr id="rdr-@redirect.RedirectId">
+            <td>
+                <button class="btn btn-outline-info" onclick="copyToClipboard(@redirect.RedirectId)">
+                    <svg height="15px" role="img" width="15px" viewBox="0 0 1024 896" fill="#000000">
+                        <!--react-clipboard-icon from @@zenorocha.-->
+                        <path d='M128 768h256v64H128v-64z m320-384H128v64h320v-64z m128 192V448L384 640l192 192V704h320V576H576z m-288-64H128v64h160v-64zM128 704h160v-64H128v64z m576 64h64v128c-1 18-7 33-19 45s-27 18-45 19H64c-35 0-64-29-64-64V192c0-35 29-64 64-64h192C256 57 313 0 384 0s128 57 128 128h192c35 0 64 29 64 64v320h-64V320H64v576h640V768zM128 256h512c0-35-29-64-64-64h-64c-35 0-64-29-64-64s-29-64-64-64-64 29-64 64-29 64-64 64h-64c-35 0-64 29-64 64z' />
+                    </svg>
+                </button>
+                <span>go/@Html.DisplayFor(m => redirect.Name)</span><input id="lnk-@redirect.RedirectId" type="text" style="display:none" value="go/@redirect.Name" />
+            </td>
+            <td>
+                <a href="@redirect.Target">@Html.DisplayFor(m => redirect.Target)</a>
+            </td>
+            <td>
+                @Html.DisplayFor(m => redirect.Description)
+            </td>
+            <td class="text-center">
+                @{
+                var deleteRouteData = new Dictionary<string, string>
+                    {
+                    { "id", redirect.RedirectId.ToString() }
                     };
                     }
                     <a asp-controller="Redirect" asp-action="DeleteAsync" asp-all-route-data="deleteRouteData" class="btn btn-outline-danger">&#x274C;</a>
-                </td>
-            </tr>
+            </td>
+        </tr>
         }
     </tbody>
 </table>
 @if (Model.HighlightRedirectId != -1)
 {
-    <script>
+<script>
         $(function () {
             $('html, body').animate({
                 scrollTop: $('#rdr-@Model.HighlightRedirectId').offset().top
             }, 1000);
         });
-    </script>
+</script>
 }
 <script>
 
