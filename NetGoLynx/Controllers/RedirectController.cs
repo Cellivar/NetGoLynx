@@ -1,32 +1,56 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NetGoLynx.Models.RedirectModels;
 
 namespace NetGoLynx.Controllers
 {
+    /// <summary>
+    /// Controller for interacting with redirects
+    /// </summary>
+    [Authorize]
     [Route("_/[controller]")]
     public class RedirectController : Controller
     {
         private readonly RedirectApiController _redirectController;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RedirectController"/> class.
+        /// </summary>
+        /// <param name="redirectController">The redirect API for performing operations.</param>
         public RedirectController(RedirectApiController redirectController)
         {
             _redirectController = redirectController;
         }
 
+        /// <summary>
+        /// Get a list of all owned redirects.
+        /// </summary>
+        /// <param name="highlightId">A specific redirect to highlight</param>
+        /// <returns>The list view populated with redirects.</returns>
         [HttpGet("list")]
-        public async Task<IActionResult> ListAsync(int highlightId = -1)
+        public async Task<IActionResult> ListAsync(int highlightId)
         {
             var redirects = await _redirectController.GetRedirectEntriesAsync();
             return View("List", new ListModel(redirects: redirects, id: highlightId));
         }
 
+        /// <summary>
+        /// Get the add redirect page.
+        /// </summary>
+        /// <param name="suggestedLinkName">An optional suggested link name to add.</param>
+        /// <returns>The add view</returns>
         [HttpGet("add")]
         public async Task<IActionResult> AddAsync(string suggestedLinkName = "")
         {
             return View("Add", new RedirectMetadata(suggestedLinkName));
         }
 
+        /// <summary>
+        /// Add a redirect.
+        /// </summary>
+        /// <param name="model">The redirect structure to add.</param>
+        /// <returns>The list view if successful, otherwise an error message.</returns>
         [HttpPost("add")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddAsync(RedirectMetadata model)
@@ -53,6 +77,11 @@ namespace NetGoLynx.Controllers
             }
         }
 
+        /// <summary>
+        /// Get the delete redirect page.
+        /// </summary>
+        /// <param name="id">The redirect to delete</param>
+        /// <returns>The delete view with information about the selected redirect.</returns>
         [HttpGet("delete")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
@@ -66,6 +95,11 @@ namespace NetGoLynx.Controllers
             return View("Delete", new RedirectMetadata(redirect.Value));
         }
 
+        /// <summary>
+        /// Delete a redirect.
+        /// </summary>
+        /// <param name="model">The redirect to delete</param>
+        /// <returns>The list view</returns>
         [HttpPost("delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteAsync(RedirectMetadata model)

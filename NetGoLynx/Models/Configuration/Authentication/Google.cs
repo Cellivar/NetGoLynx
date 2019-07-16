@@ -1,4 +1,6 @@
-﻿namespace NetGoLynx.Models.Configuration.Authentication
+﻿using Microsoft.AspNetCore.Authentication.Google;
+
+namespace NetGoLynx.Models.Configuration.Authentication
 {
     /// <summary>
     /// Represents a configuration for Google's OAuth endpoint.
@@ -16,7 +18,7 @@
         /// If this configuration section is missing, this value will indicate that the other values
         /// in this configuration are not valid and should be discarded.
         /// </remarks>
-        public bool Enabled { get; set; } = false;
+        public bool Enabled => !string.IsNullOrEmpty(ClientId);
 
         /// <summary>
         /// Gets or sets the Google OAuth client ID.
@@ -27,5 +29,10 @@
         /// Gets or sets the Google OAuth client secret.
         /// </summary>
         public string ClientSecret { get; set; }
+
+        /// <summary>
+        /// Gets the authentication scheme for Google OAuth.
+        /// </summary>
+        public static string AuthenticationScheme => GoogleDefaults.AuthenticationScheme;
     }
 }

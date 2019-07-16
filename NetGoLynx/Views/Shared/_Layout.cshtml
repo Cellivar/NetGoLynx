@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -34,6 +35,21 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Redirect" asp-action="AddAsync">Add</a>
                         </li>
+                    </ul>
+                    <ul class="nav navbar-nav flex-row justify-content-between ml-auto">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link disabled">@User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value</a>
+                                <a asp-controller="Account" asp-action="LogoutAsync" class="btn btn-outline-dark">Logout</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="Account" asp-action="LoginAsync" class="btn btn-outline-success">Login</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

@@ -1,9 +1,7 @@
-﻿using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -14,7 +12,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NetGoLynx.Data;
 using NetGoLynx.Models.Configuration.Authentication;
-using Newtonsoft.Json.Linq;
 
 namespace NetGoLynx
 {
@@ -71,7 +68,15 @@ namespace NetGoLynx
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
             // Conditionally chain together calls to add auth providers.
-            var auth = services.AddAuthentication();
+            var auth = services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            }).AddCookie(options =>
+            {
+                options.LoginPath = new PathString("/_/Account/Login");
+            });
 
             var googleConfig = Configuration.GetSection("Authentication:Google").Get<Google>();
             if (googleConfig.Enabled)
@@ -80,47 +85,24 @@ namespace NetGoLynx
                 {
                     options.ClientId = googleConfig.ClientId;
                     options.ClientSecret = googleConfig.ClientSecret;
-                    options.CallbackPath = new PathString("/_/account/signin-google");
+                    options.CallbackPath = new PathString("/_/api/v1/account/signin-google");
+
+                    options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
                 });
             }
 
             var githubConfig = Configuration.GetSection("Authentication:GitHub").Get<GitHub>();
             if (githubConfig.Enabled)
             {
-                auth = auth.AddOAuth("GitHub", options =>
+                auth = auth.AddGitHub(options =>
                 {
-                    var githubAuthNSection = Configuration.GetSection("Authentication:GitHub");
-
                     options.ClientId = githubConfig.ClientId;
                     options.ClientSecret = githubConfig.ClientSecret;
-                    options.CallbackPath = new PathString("/_/account/signin-github");
+                    options.CallbackPath = new PathString("/_/api/v1/account/signin-github");
 
-                    options.AuthorizationEndpoint = githubConfig.AuthorizationEndpoint;
-                    options.TokenEndpoint = githubConfig.TokenEndpoint;
-                    options.UserInformationEndpoint = githubConfig.UserInformationEndpoint;
+                    options.Scope.Add("user:email");
 
-                    options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
-                    options.ClaimActions.MapJsonKey(ClaimTypes.Name, "name");
-                    options.ClaimActions.MapJsonKey("urn:github:login", "login");
-                    options.ClaimActions.MapJsonKey("urn:github:url", "html_url");
-                    options.ClaimActions.MapJsonKey("urn:github:avatar", "avatar_url");
-
-                    options.Events = new OAuthEvents
-                    {
-                        OnCreatingTicket = async context =>
-                        {
-                            var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
-                            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
-
-                            var response = await context.Backchannel.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, context.HttpContext.RequestAborted);
-                            response.EnsureSuccessStatusCode();
-
-                            var user = JObject.Parse(await response.Content.ReadAsStringAsync());
-
-                            context.RunClaimActions(user);
-                        }
-                    };
+                    options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
                 });
             }
 
