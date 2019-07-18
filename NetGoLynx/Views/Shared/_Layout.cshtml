@@ -28,19 +28,13 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Redirect" asp-action="ListAsync">List</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Redirect" asp-action="AddAsync">Add</a>
-                        </li>
-                    </ul>
-                    <ul class="nav navbar-nav flex-row justify-content-between ml-auto">
+                    <ul class="nav navbar-nav navbar-right ml-auto">
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
                                 <a class="nav-link disabled">@User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value</a>
+                            </li>
+                            <li class="nav-item">
                                 <a asp-controller="Account" asp-action="LogoutAsync" class="btn btn-outline-dark">Logout</a>
                             </li>
                         }
@@ -50,6 +44,14 @@
                                 <a asp-controller="Account" asp-action="LoginAsync" class="btn btn-outline-success">Login</a>
                             </li>
                         }
+                    </ul>
+                    <ul class="nav navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Redirect" asp-action="ListAsync">List</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Redirect" asp-action="AddAsync">Add</a>
+                        </li>
                     </ul>
                 </div>
             </div>
