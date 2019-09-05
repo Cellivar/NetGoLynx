@@ -7,7 +7,7 @@ namespace NetGoLynx.Models
     /// <summary>
     /// Information for a redirection
     /// </summary>
-    public class Redirect
+    public class Redirect : IRedirect
     {
         /// <summary>
         /// The unique ID of this redirect

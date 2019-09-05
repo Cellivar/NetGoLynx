@@ -20,6 +20,8 @@ namespace NetGoLynx.Migrations
                     b.Property<int>("AccountId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int>("Access");
+
                     b.Property<string>("Name")
                         .IsRequired();
 

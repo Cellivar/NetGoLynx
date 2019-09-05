@@ -7,7 +7,7 @@ namespace NetGoLynx.Models
     /// <summary>
     /// User information stored in the database.
     /// </summary>
-    public class Account
+    public class Account : IAccount
     {
         /// <summary>
         /// The ID of this email account
@@ -31,5 +31,25 @@ namespace NetGoLynx.Models
         /// The list of redirects this account owns.
         /// </summary>
         public List<Redirect> Redirects { get; set; }
+
+        /// <summary>
+        /// Gets the access level for this account.
+        /// </summary>
+        public AccessType Access { get; set; } = AccessType.Default;
+
+        /// <summary>
+        /// Gets a value indicating whether this account may view a redirect.
+        /// </summary>
+        /// <param name="redirect">The redirect to determine authorization to see.</param>
+        /// <returns>True if the user may view a redirect, otherwise false.</returns>
+        public bool MayView(IRedirect redirect)
+        {
+            if (Access.HasFlag(AccessType.Admin))
+            {
+                return true;
+            }
+
+            return redirect?.AccountId == AccountId;
+        }
     }
 }
