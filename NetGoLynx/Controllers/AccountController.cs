@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NetGoLynx.Models.Accounts;
 using NetGoLynx.Models.Configuration.Authentication;
 using NetGoLynx.Services;
 
@@ -15,10 +17,12 @@ namespace NetGoLynx.Controllers
     public class AccountController : Controller
     {
         private readonly IAccountService _accountService;
+        private readonly string[] _availableSchemes;
 
-        public AccountController(IAccountService service)
+        public AccountController(IAccountService service, IAuthenticationSchemeProvider authProvider)
         {
             _accountService = service;
+            _availableSchemes = authProvider.GetAllSchemesAsync().Result.Select(s => s.DisplayName).ToArray();
         }
 
         /// <summary>
@@ -28,7 +32,7 @@ namespace NetGoLynx.Controllers
         [HttpGet("Login")]
         public async Task<IActionResult> LoginAsync()
         {
-            return View();
+            return View(new LoginModel(_availableSchemes));
         }
 
         /// <summary>

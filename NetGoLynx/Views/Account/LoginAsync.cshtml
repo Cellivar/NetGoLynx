@@ -1,6 +1,4 @@
-﻿
-@inject IAuthenticationSchemeProvider SchemeProvider
-@using Microsoft.AspNetCore.Authentication
+﻿@model NetGoLynx.Models.Accounts.LoginModel
 @{
     ViewData["Title"] = "Login to GoLynx";
 }
@@ -15,8 +13,14 @@
         else
         {
             <h3>Select a provider to log in with </h3>
-            <a class="btn btn-info" asp-controller="Account" asp-action="LoginGoogleAsync">Login with Google</a>
-            <a class="btn btn-info" asp-controller="Account" asp-action="LoginGitHubAsync">Login with GitHub</a>
+            @if (Model.IsGitHubEnabled)
+            {
+                <a class="btn btn-info" asp-controller="Account" asp-action="LoginGitHubAsync">Login with GitHub</a>
+            }
+            @if (Model.IsGoogleEnabled)
+            {
+                <a class="btn btn-info" asp-controller="Account" asp-action="LoginGoogleAsync">Login with Google</a>
+            }
         }
     </div>
     <div class="col"></div>

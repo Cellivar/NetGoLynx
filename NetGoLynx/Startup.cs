@@ -81,7 +81,7 @@ namespace NetGoLynx
             });
 
             var googleConfig = Configuration.GetSection("Authentication:Google").Get<Google>();
-            if (googleConfig.Enabled)
+            if (googleConfig != null && googleConfig.Enabled)
             {
                 auth = auth.AddGoogle(options =>
                 {
@@ -94,7 +94,7 @@ namespace NetGoLynx
             }
 
             var githubConfig = Configuration.GetSection("Authentication:GitHub").Get<GitHub>();
-            if (githubConfig.Enabled)
+            if (githubConfig != null && githubConfig.Enabled)
             {
                 auth = auth.AddGitHub(options =>
                 {
