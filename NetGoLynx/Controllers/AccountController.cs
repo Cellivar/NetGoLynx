@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NetGoLynx.Models.Configuration.Authentication;
+using NetGoLynx.Services;
 
 namespace NetGoLynx.Controllers
 {
@@ -13,12 +14,27 @@ namespace NetGoLynx.Controllers
     [Route("_/[controller]")]
     public class AccountController : Controller
     {
+        private readonly IAccountService _accountService;
+
+        public AccountController(IAccountService service)
+        {
+            _accountService = service;
+        }
+
+        /// <summary>
+        /// Displays the login selection page
+        /// </summary>
+        /// <returns>The login selection view.</returns>
         [HttpGet("Login")]
         public async Task<IActionResult> LoginAsync()
         {
             return View();
         }
 
+        /// <summary>
+        /// Log a user into Google.
+        /// </summary>
+        /// <returns>A redirect to the list view page.</returns>
         [HttpGet("Google")]
         public async Task<IActionResult> LoginGoogleAsync()
         {
@@ -30,17 +46,39 @@ namespace NetGoLynx.Controllers
                 Google.AuthenticationScheme);
         }
 
+        /// <summary>
+        /// Log a user into GitHub.
+        /// </summary>
+        /// <returns>A redirect to the list view page.</returns>
         [HttpGet("GitHub")]
         public async Task<IActionResult> LoginGitHubAsync()
         {
             return Challenge(
                 new AuthenticationProperties
                 {
-                    RedirectUri = Url.Action("ListAsync", "Redirect"),
+                    RedirectUri = Url.Action("LoginSuccessAsync", "Account"),
                 },
                 GitHub.AuthenticationScheme);
         }
 
+        /// <summary>
+        /// Confirm a user is logged into the system as a redirect target.
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet("Success")]
+        public async Task<IActionResult> LoginSuccessAsync()
+        {
+            // Ensure the user exists in the database.
+            await _accountService.GetOrCreate(User);
+
+            return RedirectToAction("ListAsync", "Redirect");
+        }
+
+        /// <summary>
+        /// Log a user out.
+        /// </summary>
+        /// <returns>A redirect to the list view page.</returns>
         [Authorize]
         [HttpGet("Logout")]
         public async Task<IActionResult> LogoutAsync()

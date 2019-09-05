@@ -14,7 +14,7 @@ namespace NetGoLynx.Models.RedirectModels
         /// <param name="id">The redirect ID to highlight</param>
         /// <param name="name">The redirect name to highlight</param>
         public ListModel(
-            IEnumerable<Redirect> redirects = null,
+            IEnumerable<IRedirect> redirects = null,
             int id = -1,
             string name = "")
         {
@@ -26,7 +26,7 @@ namespace NetGoLynx.Models.RedirectModels
         /// <summary>
         /// The list of redirects to display
         /// </summary>
-        public IEnumerable<Redirect> Redirects { get; }
+        public IEnumerable<IRedirect> Redirects { get; }
 
         /// <summary>
         /// The redirect name to highlight

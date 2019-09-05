@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NetGoLynx.Models;
+using NetGoLynx.Services;
 
 namespace NetGoLynx.Controllers
 {
@@ -11,15 +12,15 @@ namespace NetGoLynx.Controllers
     [Route("/")]
     public class HomeController : Controller
     {
-        private readonly RedirectApiController _redirectApi;
+        private readonly IRedirectService _redirectService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeController"/> class.
         /// </summary>
-        /// <param name="redirectApi"></param>
-        public HomeController(RedirectApiController redirectApi)
+        /// <param name="redirectService"></param>
+        public HomeController(IRedirectService redirectService)
         {
-            _redirectApi = redirectApi;
+            _redirectService = redirectService;
         }
 
         /// <summary>
@@ -40,12 +41,20 @@ namespace NetGoLynx.Controllers
         [HttpGet("{*name}", Order = int.MaxValue)]
         public async Task<IActionResult> ResolveAsync(string name)
         {
-            var redirect = await _redirectApi.GetRedirectEntry(name);
+            var target = await _redirectService.GetRedirectTargetAsync(name);
 
-            var target = redirect?.Target ??
-                Url.Action("AddAsync", "Redirect", new { suggestedLinkName = name });
+            if (!string.IsNullOrEmpty(target))
+            {
+                return Redirect(target);
+            }
 
-            return Redirect(target);
+            if (User.Identity.IsAuthenticated)
+            {
+                // Logged in users get a pretty add page
+                return RedirectToAction("AddAsync", "Redirect", new { suggestedLinkName = name });
+            }
+
+            return RedirectToAction("NotFound", "Redirect");
         }
 
         /// <summary>

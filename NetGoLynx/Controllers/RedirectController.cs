@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NetGoLynx.Models.RedirectModels;
+using NetGoLynx.Services;
 
 namespace NetGoLynx.Controllers
 {
@@ -12,15 +13,22 @@ namespace NetGoLynx.Controllers
     [Route("_/[controller]")]
     public class RedirectController : Controller
     {
-        private readonly RedirectApiController _redirectController;
+        private readonly IRedirectService _redirectService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RedirectController"/> class.
         /// </summary>
-        /// <param name="redirectController">The redirect API for performing operations.</param>
-        public RedirectController(RedirectApiController redirectController)
+        /// <param name="redirectService">The redirect API for performing operations.</param>
+        public RedirectController(IRedirectService redirectService)
         {
-            _redirectController = redirectController;
+            _redirectService = redirectService;
+        }
+
+        [HttpGet("notfound")]
+        [AllowAnonymous]
+        public IActionResult NotFound()
+        {
+            return View();
         }
 
         /// <summary>
@@ -31,7 +39,7 @@ namespace NetGoLynx.Controllers
         [HttpGet("list")]
         public async Task<IActionResult> ListAsync(int highlightId)
         {
-            var redirects = await _redirectController.GetRedirectEntriesAsync();
+            var redirects = await _redirectService.GetAsync();
             return View("List", new ListModel(redirects: redirects, id: highlightId));
         }
 
@@ -63,18 +71,20 @@ namespace NetGoLynx.Controllers
 
             var redirect = model.ToRedirect();
 
-            var result = await _redirectController.TryCreateRedirectAsync(redirect);
-            switch (result.Result)
+            var success = await _redirectService.TryCreateAsync(redirect);
+            if (success)
             {
-                case RedirectApiController.OperationResult.Success:
-                    return await ListAsync(highlightId: result.Redirect.RedirectId);
-                case RedirectApiController.OperationResult.Conflict:
-                    model.ErrorMessage = "A link with that name already exists.";
-                    return View("Add", model);
-                default:
-                    model.ErrorMessage = "Unknown problem happened. Try again?";
-                    return View("Add", model);
+                return RedirectToAction("ListAsync", new { highlightId = redirect.RedirectId });
             }
+
+            if (redirect.RedirectId == -1)
+            {
+                model.ErrorMessage = "A link with that name already exists.";
+                return View("Add", model);
+            }
+
+            model.ErrorMessage = "Unknown problem happened. Try again?";
+            return View("Add", model);
         }
 
         /// <summary>
@@ -86,13 +96,13 @@ namespace NetGoLynx.Controllers
         public async Task<IActionResult> DeleteAsync(int id)
         {
             // Confirm the referenced ID is real
-            var redirect = await _redirectController.GetRedirect(id);
-            if (redirect.Value == null)
+            var redirect = await _redirectService.GetAsync(id);
+            if (redirect == null)
             {
                 return BadRequest();
             }
 
-            return View("Delete", new RedirectMetadata(redirect.Value));
+            return View("Delete", new RedirectMetadata(redirect.Name, redirect.RedirectId));
         }
 
         /// <summary>
@@ -104,7 +114,7 @@ namespace NetGoLynx.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteAsync(RedirectMetadata model)
         {
-            await _redirectController.DeleteRedirect(model.RedirectId);
+            await _redirectService.DeleteAsync(model.RedirectId);
 
             return RedirectToAction("ListAsync");
         }

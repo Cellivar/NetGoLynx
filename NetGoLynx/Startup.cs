@@ -10,8 +10,10 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using NetGoLynx.Data;
 using NetGoLynx.Models.Configuration.Authentication;
+using NetGoLynx.Services;
 
 namespace NetGoLynx
 {
@@ -105,6 +107,15 @@ namespace NetGoLynx
                     options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
                 });
             }
+
+            // Register services
+            services
+                .AddTransient<IAccountService, AccountService>()
+                .AddTransient<IRedirectService, RedirectService>();
+
+            services
+                .TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
 
             var dbOptions = services.BuildServiceProvider().GetRequiredService<DbContextOptions<RedirectContext>>();
 

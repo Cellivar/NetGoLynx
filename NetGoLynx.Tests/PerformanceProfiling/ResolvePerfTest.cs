@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NetGoLynx.Controllers;
 using NetGoLynx.Data;
 using NetGoLynx.Models;
+using NetGoLynx.Services;
 
 namespace NetGoLynx.Tests.PerformanceProfiling
 {
@@ -73,9 +73,9 @@ namespace NetGoLynx.Tests.PerformanceProfiling
                 Assert.IsNotNull(model, "Failed to warm up context??");
                 TestContext.WriteLine($"Warmup call took {warmup.TotalMilliseconds}ms");
 
-                var redirectController = new RedirectApiController(context);
+                var redirectController = new RedirectService(context, new Fakes.FakeAccountService());
 
-                var (timer, result) = Time(() => redirectController.GetRedirectEntry(redirect2.Name).Result);
+                var (timer, result) = Time(() => redirectController.GetAsync(redirect2.Name).Result);
 
                 Assert.AreEqual(redirect2.Target, result.Target, "Acquired entry is not correct??");
                 Assert.IsTrue(timer.TotalMilliseconds < 250, $"Target resolution time was too slow at {timer.TotalMilliseconds}ms.");
@@ -97,13 +97,13 @@ namespace NetGoLynx.Tests.PerformanceProfiling
                 context.Add(redirect1);
                 context.SaveChanges();
 
-                var redirectController = new RedirectApiController(context);
+                var redirectController = new RedirectService(context, new Fakes.FakeAccountService());
 
-                var (warmup, model) = Time(() => redirectController.GetRedirectEntry(redirect1.Name).Result);
+                var (warmup, model) = Time(() => redirectController.GetAsync(redirect1.Name).Result);
                 Assert.IsNotNull(model, "Failed to warm up context??");
                 TestContext.WriteLine($"Warmup call took {warmup.TotalMilliseconds}ms");
 
-                var (timer, result) = Time(() => redirectController.GetRedirectEntry(redirect1.Name).Result);
+                var (timer, result) = Time(() => redirectController.GetAsync(redirect1.Name).Result);
 
                 Assert.AreEqual(redirect1.Target, result.Target, "Acquired entry is not correct??");
                 Assert.IsTrue(timer.TotalMilliseconds < 5, $"Target resolution time was too slow at {timer.TotalMilliseconds}ms.");
