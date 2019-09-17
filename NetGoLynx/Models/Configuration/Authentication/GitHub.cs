@@ -44,6 +44,11 @@
         public string UserInformationEndpoint { get; set; }
 
         /// <summary>
+        /// Gets or sets the user email URL
+        /// </summary>
+        public string UserEmailsEndpoint { get; set; }
+
+        /// <summary>
         /// Gets the authentication scheme for Google OAuth.
         /// </summary>
         public static string AuthenticationScheme => "GitHub";

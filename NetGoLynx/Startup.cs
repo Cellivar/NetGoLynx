@@ -100,6 +100,12 @@ namespace NetGoLynx
                 {
                     options.ClientId = githubConfig.ClientId;
                     options.ClientSecret = githubConfig.ClientSecret;
+
+                    options.UserEmailsEndpoint = githubConfig.UserEmailsEndpoint;
+                    options.UserInformationEndpoint = githubConfig.UserInformationEndpoint;
+                    options.AuthorizationEndpoint = githubConfig.AuthorizationEndpoint;
+                    options.TokenEndpoint = githubConfig.TokenEndpoint;
+
                     options.CallbackPath = new PathString("/_/api/v1/account/signin-github");
 
                     options.Scope.Add("user:email");
