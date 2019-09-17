@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using NetGoLynx.Data;
+using Newtonsoft.Json;
 
 namespace NetGoLynx.Models
 {
@@ -44,6 +45,7 @@ namespace NetGoLynx.Models
         /// <summary>
         /// Gets or sets the account that owns this redirect.
         /// </summary>
+        [JsonIgnore]
         public Account Account { get; set; }
     }
 }
