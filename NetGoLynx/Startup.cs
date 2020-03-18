@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using NetGoLynx.Data;
 using NetGoLynx.Models.Configuration.Authentication;
 using NetGoLynx.Services;
@@ -54,7 +55,6 @@ namespace NetGoLynx
 
             services
                 .AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddControllersAsServices();
 
             services.AddApiVersioning(options =>
@@ -128,10 +128,8 @@ namespace NetGoLynx
             // Kick off an the database context load
             Task.Run(() =>
             {
-                using (var context = new RedirectContext(dbOptions))
-                {
-                    var warmup = context.Redirects.FirstOrDefaultAsync();
-                }
+                using var context = new RedirectContext(dbOptions);
+                var warmup = context.Redirects.FirstOrDefaultAsync();
             });
         }
 
@@ -143,7 +141,7 @@ namespace NetGoLynx
         /// <remarks>
         /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </remarks>
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -158,10 +156,15 @@ namespace NetGoLynx
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseRouting();
 
             app.UseAuthentication();
+            app.UseAuthorization();
 
-            app.UseMvc();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }
