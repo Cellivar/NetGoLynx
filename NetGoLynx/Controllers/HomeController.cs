@@ -30,7 +30,7 @@ namespace NetGoLynx.Controllers
         [HttpGet("")]
         public IActionResult Index()
         {
-            return RedirectToAction("ListAsync", "Redirect");
+            return RedirectToAction("List", "Redirect");
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace NetGoLynx.Controllers
             if (User.Identity.IsAuthenticated)
             {
                 // Logged in users get a pretty add page
-                return RedirectToAction("AddAsync", "Redirect", new { suggestedLinkName = name });
+                return RedirectToAction("Add", "Redirect", new { suggestedLinkName = name });
             }
 
             return RedirectToAction("NotFound", "Redirect");
@@ -61,6 +61,7 @@ namespace NetGoLynx.Controllers
         /// Handle error pages.
         /// </summary>
         /// <returns>An error view.</returns>
+        [HttpGet("/_/Home/Error")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

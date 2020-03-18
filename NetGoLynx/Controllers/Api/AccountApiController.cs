@@ -16,13 +16,13 @@ namespace NetGoLynx.Controllers.Api
     [ApiController]
     public class AccountApiController : ControllerBase
     {
-        private readonly AccountService _accountService;
+        private readonly IAccountService _accountService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AccountApiController"/> class.
         /// </summary>
         /// <param name="context"></param>
-        public AccountApiController(AccountService accountService)
+        public AccountApiController(IAccountService accountService)
         {
             _accountService = accountService;
         }

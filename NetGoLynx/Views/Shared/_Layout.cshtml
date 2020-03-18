@@ -35,22 +35,22 @@
                                 <a class="nav-link disabled">@User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value</a>
                             </li>
                             <li class="nav-item">
-                                <a asp-controller="Account" asp-action="LogoutAsync" class="btn btn-outline-dark">Logout</a>
+                                <a asp-controller="Account" asp-action="Logout" class="btn btn-outline-dark">Logout</a>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a asp-controller="Account" asp-action="LoginAsync" class="btn btn-outline-success">Login</a>
+                                <a asp-controller="Account" asp-action="Login" class="btn btn-outline-success">Login</a>
                             </li>
                         }
                     </ul>
                     <ul class="nav navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Redirect" asp-action="ListAsync">List</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Redirect" asp-action="List">List</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Redirect" asp-action="AddAsync">Add</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Redirect" asp-action="Add">Add</a>
                         </li>
                     </ul>
                 </div>
