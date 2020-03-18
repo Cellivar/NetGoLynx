@@ -45,7 +45,7 @@ namespace NetGoLynx.Controllers
             return Challenge(
                 new AuthenticationProperties
                 {
-                    RedirectUri = Url.Action("ListAsync", "Redirect")
+                    RedirectUri = Url.Action("List", "Redirect")
                 },
                 Google.AuthenticationScheme);
         }
@@ -60,7 +60,7 @@ namespace NetGoLynx.Controllers
             return Challenge(
                 new AuthenticationProperties
                 {
-                    RedirectUri = Url.Action("LoginSuccessAsync", "Account"),
+                    RedirectUri = Url.Action("LoginSuccess", "Account"),
                 },
                 GitHub.AuthenticationScheme);
         }
@@ -76,7 +76,7 @@ namespace NetGoLynx.Controllers
             // Ensure the user exists in the database.
             await _accountService.GetOrCreate(User);
 
-            return RedirectToAction("ListAsync", "Redirect");
+            return RedirectToAction("List", "Redirect");
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace NetGoLynx.Controllers
         public async Task<IActionResult> LogoutAsync()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("ListAsync", "Redirect");
+            return RedirectToAction("List", "Redirect");
         }
     }
 }

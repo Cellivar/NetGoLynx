@@ -74,7 +74,7 @@ namespace NetGoLynx.Controllers
             var success = await _redirectService.TryCreateAsync(redirect);
             if (success)
             {
-                return RedirectToAction("ListAsync", new { highlightId = redirect.RedirectId });
+                return RedirectToAction("List", new { highlightId = redirect.RedirectId });
             }
 
             if (redirect.RedirectId == -1)
@@ -116,7 +116,7 @@ namespace NetGoLynx.Controllers
         {
             await _redirectService.DeleteAsync(model.RedirectId);
 
-            return RedirectToAction("ListAsync");
+            return RedirectToAction("List");
         }
     }
 }

@@ -56,7 +56,7 @@
             var filterClear = document.querySelector("#filter-clear");
 
             var highlight = @Model.HighlightRedirectId;
-            var deleteUrl = "@Url.Action("DeleteAsync", "Redirect")";
+            var deleteUrl = "@Url.Action("Delete", "Redirect")";
 
             function getClickButton(redirectId) {
                 var btn = document.createElement("button");

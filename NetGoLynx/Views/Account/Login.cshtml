@@ -8,18 +8,18 @@
     <div class="col-6">
         @if (User.Identity.IsAuthenticated)
         {
-            <a class="btn btn-danger" asp-controller="Account" asp-action="LogoutAsync">Log out</a>
+            <a class="btn btn-danger" asp-controller="Account" asp-action="Logout">Log out</a>
         }
         else
         {
             <h3>Select a provider to log in with </h3>
             @if (Model.IsGitHubEnabled)
             {
-                <a class="btn btn-info" asp-controller="Account" asp-action="LoginGitHubAsync">Login with GitHub</a>
+                <a class="btn btn-info" asp-controller="Account" asp-action="LoginGitHub">Login with GitHub</a>
             }
             @if (Model.IsGoogleEnabled)
             {
-                <a class="btn btn-info" asp-controller="Account" asp-action="LoginGoogleAsync">Login with Google</a>
+                <a class="btn btn-info" asp-controller="Account" asp-action="LoginGoogle">Login with Google</a>
             }
         }
     </div>
