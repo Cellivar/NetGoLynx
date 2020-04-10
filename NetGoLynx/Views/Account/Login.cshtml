@@ -21,6 +21,10 @@
             {
                 <a class="btn btn-info" asp-controller="Account" asp-action="LoginGoogle">Login with Google</a>
             }
+            @if (Model.IsOktaEnabled)
+            {
+                <a class="btn btn-info" asp-controller="Account" asp-action="LoginOkta">Login with Okta</a>
+            }
         }
     </div>
     <div class="col"></div>

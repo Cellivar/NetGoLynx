@@ -1,4 +1,7 @@
-﻿using System.Security.Claims;
+﻿using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Security.Claims;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -80,6 +83,47 @@ namespace NetGoLynx
                 options.LoginPath = new PathString("/_/Account/Login");
             });
 
+            var oktaConfig = Configuration.GetSection("Authentication:Okta").Get<Okta>();
+            if (oktaConfig != null && oktaConfig.Enabled)
+            {
+                auth = auth.AddOAuth(Okta.AuthenticationScheme, Okta.AuthenticationScheme, options =>
+                {
+                    options.ClientId = oktaConfig.ClientId;
+                    options.ClientSecret = oktaConfig.ClientSecret;
+
+                    options.AuthorizationEndpoint = oktaConfig.AuthorizationEndpoint;
+                    options.TokenEndpoint = oktaConfig.TokenEndpoint;
+                    options.UserInformationEndpoint = oktaConfig.UserInformationEndpoint;
+
+                    options.CallbackPath = new PathString("/_/api/v1/account/signin-okta");
+
+                    options.Scope.Add("openid");
+                    options.Scope.Add("profile");
+                    options.Scope.Add("email");
+
+                    options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
+
+                    options.Events = new Microsoft.AspNetCore.Authentication.OAuth.OAuthEvents
+                    {
+                        OnCreatingTicket = async context =>
+                        {
+                            var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
+                            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
+
+                            var response = await context.Backchannel.SendAsync(
+                                request,
+                                HttpCompletionOption.ResponseHeadersRead,
+                                context.HttpContext.RequestAborted);
+                            response.EnsureSuccessStatusCode();
+
+                            using var user = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+                            context.RunClaimActions(user.RootElement);
+                        }
+                    };
+                });
+            }
+
             var googleConfig = Configuration.GetSection("Authentication:Google").Get<Google>();
             if (googleConfig != null && googleConfig.Enabled)
             {
@@ -122,15 +166,14 @@ namespace NetGoLynx
             services
                 .TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-
+            // Kick off an the database context load
             var dbOptions = services.BuildServiceProvider().GetRequiredService<DbContextOptions<RedirectContext>>();
 
-            // Kick off an the database context load
             Task.Run(() =>
-            {
-                using var context = new RedirectContext(dbOptions);
-                var warmup = context.Redirects.FirstOrDefaultAsync();
-            });
+                        {
+                            using var context = new RedirectContext(dbOptions);
+                            var warmup = context.Redirects.FirstOrDefaultAsync();
+                        });
         }
 
         /// <summary>
