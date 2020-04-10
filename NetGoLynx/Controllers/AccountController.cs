@@ -36,7 +36,7 @@ namespace NetGoLynx.Controllers
         }
 
         /// <summary>
-        /// Log a user into Google.
+        /// Log a user in via Google.
         /// </summary>
         /// <returns>A redirect to the list view page.</returns>
         [HttpGet("Google")]
@@ -45,13 +45,13 @@ namespace NetGoLynx.Controllers
             return Challenge(
                 new AuthenticationProperties
                 {
-                    RedirectUri = Url.Action("List", "Redirect")
+                    RedirectUri = Url.Action("LoginSuccess", "Account")
                 },
                 Google.AuthenticationScheme);
         }
 
         /// <summary>
-        /// Log a user into GitHub.
+        /// Log a user in via GitHub.
         /// </summary>
         /// <returns>A redirect to the list view page.</returns>
         [HttpGet("GitHub")]
@@ -63,6 +63,21 @@ namespace NetGoLynx.Controllers
                     RedirectUri = Url.Action("LoginSuccess", "Account"),
                 },
                 GitHub.AuthenticationScheme);
+        }
+
+        /// <summary>
+        /// Log a user in via Okta.
+        /// </summary>
+        /// <returns>A redirect to the list view page.</returns>
+        [HttpGet("Okta")]
+        public async Task<IActionResult> LoginOktaAsync()
+        {
+            return Challenge(
+                new AuthenticationProperties
+                {
+                    RedirectUri = Url.Action("LoginSuccess", "Account"),
+                },
+                Okta.AuthenticationScheme);
         }
 
         /// <summary>

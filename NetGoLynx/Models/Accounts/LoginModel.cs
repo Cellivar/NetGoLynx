@@ -6,10 +6,12 @@
 
         public LoginModel(
             bool isGoogleEnabled = false,
-            bool isGitHubEnabled = false)
+            bool isGitHubEnabled = false,
+            bool isOktaEnabled = false)
         {
             IsGoogleEnabled = isGoogleEnabled;
             IsGitHubEnabled = isGitHubEnabled;
+            IsOktaEnabled = isOktaEnabled;
         }
 
         public LoginModel(string[] schemas)
@@ -24,6 +26,9 @@
                     case "Google":
                         IsGoogleEnabled = true;
                         break;
+                    case "Okta":
+                        IsOktaEnabled = true;
+                        break;
                 }
             }
         }
@@ -31,5 +36,7 @@
         public bool IsGoogleEnabled { get; }
 
         public bool IsGitHubEnabled { get; }
+
+        public bool IsOktaEnabled { get; }
     }
 }
