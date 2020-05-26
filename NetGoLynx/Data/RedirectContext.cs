@@ -31,10 +31,29 @@ namespace NetGoLynx.Data
         /// <param name="modelBuilder">The model builder object being created.</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Redirect>()
-                .HasIndex(r => r.Name);
-            modelBuilder.Entity<Account>()
-                .HasIndex(r => r.Name);
+            var accountSequence = "AccountNumbers";
+            var redirectSequence = "RedirectNumbers";
+
+            modelBuilder.Entity<Redirect>().HasIndex(r => r.Name);
+            modelBuilder.Entity<Account>().HasIndex(r => r.Name);
+
+            modelBuilder
+                .HasSequence<int>(accountSequence)
+                .StartsAt(1)
+                .IncrementsBy(1);
+            modelBuilder
+                .Entity<Account>()
+                .Property(o => o.AccountId)
+                .HasDefaultValueSql("-- PLACEHOLDER SYNTAX, TO BE HANDLED IN MIGRATION.");
+
+            modelBuilder
+                .HasSequence<int>(redirectSequence)
+                .StartsAt(1)
+                .IncrementsBy(1);
+            modelBuilder
+                .Entity<Redirect>()
+                .Property(o => o.RedirectId)
+                .HasDefaultValueSql("-- PLACEHOLDER SYNTAX, TO BE HANDLED IN MIGRATION.");
         }
     }
 }
