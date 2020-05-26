@@ -42,6 +42,11 @@ namespace NetGoLynx.Services
         /// <returns></returns>
         public async Task<IEnumerable<IRedirect>> GetAsync()
         {
+            if (User == null)
+            {
+                return null;
+            }
+
             if (User.MayView(null))
             {
                 // Admins can see anything, even null things!
@@ -55,6 +60,10 @@ namespace NetGoLynx.Services
 
         public async Task<IRedirect> GetAsync(int id)
         {
+            if (User == null)
+            {
+                return null;
+            }
             var redirect = await _context.Redirects.FindAsync(id);
 
             if (!User.MayView(redirect))
@@ -67,6 +76,10 @@ namespace NetGoLynx.Services
 
         public async Task<IRedirect> GetAsync(string name)
         {
+            if (User == null)
+            {
+                return null;
+            }
             var redirect = await _context.Redirects.FirstOrDefaultAsync(r => r.Name == name);
 
             if (!User.MayView(redirect))
@@ -109,6 +122,11 @@ namespace NetGoLynx.Services
 
         public async Task<(bool result, IRedirect redirect)> DeleteAsync(int id)
         {
+            if (User == null)
+            {
+                return (false, null);
+            }
+
             var redirect = await GetAsync(id) as Redirect;
             if (redirect == null || !User.MayView(redirect))
             {
