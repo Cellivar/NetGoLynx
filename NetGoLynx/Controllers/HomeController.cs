@@ -41,6 +41,9 @@ namespace NetGoLynx.Controllers
         [HttpGet("{*name}", Order = int.MaxValue)]
         public async Task<IActionResult> ResolveAsync(string name)
         {
+            // Trim extraneous forward slashes only off the end
+            name = name.TrimEnd('/');
+
             var target = await _redirectService.GetRedirectTargetAsync(name);
 
             if (!string.IsNullOrEmpty(target))
