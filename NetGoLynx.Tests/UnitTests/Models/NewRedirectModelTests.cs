@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NetGoLynx.Models.RedirectModels;
 
-namespace NetGoLynx.Tests.Models
+namespace NetGoLynx.Tests.UnitTests.Models
 {
     [TestClass]
     public class NewRedirectModelTests
@@ -27,9 +27,9 @@ namespace NetGoLynx.Tests.Models
             {
                 Target = "https://valid.target"
             };
-            var (IsValid, _) = TryValidate(model);
+            var (isValid, _) = TryValidate(model);
 
-            Assert.IsTrue(IsValid);
+            Assert.IsTrue(isValid);
         }
 
         [DataTestMethod]
@@ -43,9 +43,9 @@ namespace NetGoLynx.Tests.Models
             {
                 Target = "https://valid.target"
             };
-            var (IsValid, _) = TryValidate(model);
+            var (isValid, _) = TryValidate(model);
 
-            Assert.IsFalse(IsValid);
+            Assert.IsFalse(isValid);
         }
 
         [TestMethod]
