@@ -52,6 +52,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Redirect" asp-action="Add">Add</a>
                         </li>
+                        @if (User.Claims.Any(c => c.Type == "AccountAccessLevel" && c.Value == AccessType.Admin.ToString()))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Redirect" asp-action="ListAll">List All</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

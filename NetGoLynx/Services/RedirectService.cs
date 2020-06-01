@@ -47,16 +47,9 @@ namespace NetGoLynx.Services
                 return null;
             }
 
-            if (User.MayView(null))
-            {
-                // Admins can see anything, even null things!
-                return _context.Redirects;
-            }
-            else
-            {
-                return await _context.Redirects.Where(r => r.AccountId == User.AccountId)
-                    .ToListAsync();
-            }
+            return await _context.Redirects
+                .Where(r => r.AccountId == User.AccountId)
+                .ToListAsync();
         }
 
         public async Task<IRedirect> GetAsync(int id)
@@ -89,6 +82,16 @@ namespace NetGoLynx.Services
             }
 
             return redirect;
+        }
+
+        public async Task<IEnumerable<IRedirect>> GetAllWithUsernameAsync()
+        {
+            if (User == null || User.Access != AccessType.Admin)
+            {
+                return new IRedirect[] { };
+            }
+
+            return await _context.Redirects.Include(r => r.Account).ToListAsync();
         }
 
         public async Task<bool> TryCreateAsync(Redirect redirect)
