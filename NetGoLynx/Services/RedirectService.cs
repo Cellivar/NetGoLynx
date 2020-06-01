@@ -10,7 +10,7 @@ namespace NetGoLynx.Services
 {
     public class RedirectService : IRedirectService
     {
-        private RedirectContext _context;
+        private readonly RedirectContext _context;
         private readonly IAccountService _accountService;
         private readonly Lazy<IAccount> _lazyUser;
 
@@ -54,7 +54,8 @@ namespace NetGoLynx.Services
             }
             else
             {
-                return _context.Redirects.Where(r => r.AccountId == User.AccountId);
+                return await _context.Redirects.Where(r => r.AccountId == User.AccountId)
+                    .ToListAsync();
             }
         }
 
@@ -127,8 +128,7 @@ namespace NetGoLynx.Services
                 return (false, null);
             }
 
-            var redirect = await GetAsync(id) as Redirect;
-            if (redirect == null || !User.MayView(redirect))
+            if (!(await GetAsync(id) is Redirect redirect) || !User.MayView(redirect))
             {
                 return (false, null);
             }

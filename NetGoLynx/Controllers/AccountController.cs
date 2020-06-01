@@ -30,7 +30,7 @@ namespace NetGoLynx.Controllers
         /// </summary>
         /// <returns>The login selection view.</returns>
         [HttpGet("Login")]
-        public async Task<IActionResult> LoginAsync()
+        public IActionResult LoginAsync()
         {
             return View(new LoginModel(_availableSchemes));
         }
@@ -40,7 +40,7 @@ namespace NetGoLynx.Controllers
         /// </summary>
         /// <returns>A redirect to the list view page.</returns>
         [HttpGet("Google")]
-        public async Task<IActionResult> LoginGoogleAsync()
+        public IActionResult LoginGoogleAsync()
         {
             return Challenge(
                 new AuthenticationProperties
@@ -55,7 +55,7 @@ namespace NetGoLynx.Controllers
         /// </summary>
         /// <returns>A redirect to the list view page.</returns>
         [HttpGet("GitHub")]
-        public async Task<IActionResult> LoginGitHubAsync()
+        public IActionResult LoginGitHubAsync()
         {
             return Challenge(
                 new AuthenticationProperties
@@ -70,7 +70,7 @@ namespace NetGoLynx.Controllers
         /// </summary>
         /// <returns>A redirect to the list view page.</returns>
         [HttpGet("Okta")]
-        public async Task<IActionResult> LoginOktaAsync()
+        public IActionResult LoginOktaAsync()
         {
             return Challenge(
                 new AuthenticationProperties
