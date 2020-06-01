@@ -49,7 +49,7 @@ namespace NetGoLynx.Controllers
         /// <param name="suggestedLinkName">An optional suggested link name to add.</param>
         /// <returns>The add view</returns>
         [HttpGet("add")]
-        public IActionResult AddAsync(string suggestedLinkName = "")
+        public IActionResult Add(string suggestedLinkName = "")
         {
             return View("Add", new RedirectMetadata(suggestedLinkName));
         }
