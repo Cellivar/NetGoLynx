@@ -14,6 +14,8 @@ namespace NetGoLynx.Services
 
         Task<IRedirect> GetAsync(string name);
 
+        Task<IEnumerable<IRedirect>> GetAllWithUsernameAsync();
+
         Task<bool> TryCreateAsync(Redirect redirect);
 
         Task<bool> ExistsAsync(int id);

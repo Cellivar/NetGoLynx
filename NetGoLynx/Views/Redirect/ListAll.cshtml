@@ -1,0 +1,173 @@
+﻿@model NetGoLynx.Models.RedirectModels.ListAllModel
+@using Newtonsoft.Json;
+
+@{
+    ViewData["Title"] = "All Golinks";
+}
+
+<div class="row">
+    <div class="col-6">
+        <h1 class="display-4">All links &#x1F63C;</h1>
+    </div>
+    <div class="col-6 text-right">
+        <div class="input-group">
+            <input id="filter-box" type="text" placeholder="Filter..." class="form-control" />
+            <div class="input-group-append">
+                <button id="filter-clear" class="btn btn-outline-info">Clear</button>
+            </div>
+        </div>
+        <span id="filter-text">Showing all items</span>
+    </div>
+</div>
+<table class="table table-striped table-bordered table-hover">
+    <thead>
+        <tr>
+            <td>
+                @Html.DisplayNameFor(m => m.Redirects.FirstOrDefault().Name)
+            </td>
+            <td>
+                @Html.DisplayNameFor(m => m.Redirects.FirstOrDefault().Target)
+            </td>
+            <td>
+                @Html.DisplayNameFor(m => m.Redirects.FirstOrDefault().Description)
+            </td>
+            <td>
+                @Html.DisplayNameFor(m => m.Redirects.FirstOrDefault().OwnerName)
+            </td>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody id="table-body">
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+
+        function copyToClipboard(redirectId) {
+            var copyText = document.querySelector("#lnk-" + redirectId).value;
+            navigator.clipboard.writeText(copyText);
+        }
+
+        (function () {
+            var list = @Html.Raw(JsonConvert.SerializeObject(Model.Redirects));
+            var filteredList = [];
+            var maxDisplayLimit = 500;
+            var textInput = document.querySelector("#filter-box");
+            var displayList = document.querySelector("#table-body");
+            var countMessage = document.querySelector("#filter-text");
+            var filterClear = document.querySelector("#filter-clear");
+
+            var deleteUrl = "@Url.Action("Delete", "Redirect")";
+
+            function getDeleteButton(redirectId) {
+                var btn = document.createElement("a");
+                btn.classList.add("btn");
+                btn.classList.add("btn-outline-danger");
+                btn.textContent = "\u274C";
+                btn.href = deleteUrl + "?id=" + redirectId;
+
+                return btn;
+            }
+
+            function generateCountMessage() {
+                var msg = "";
+                var matches = filteredList.length;
+                switch (true) {
+                    case matches === 0:
+                        msg = "No matches found";
+                        break;
+                    case matches === 1:
+                        msg = "Showing 1 item";
+                        break;
+                    case matches <= maxDisplayLimit:
+                        msg = "Showing " + filteredList.length + " items";
+                        break;
+                    default:
+                        msg = "Showing " + maxDisplayLimit + " of " + matches + " items";
+                }
+                countMessage.textContent = msg;
+            }
+
+            function generateListItem(item) {
+                var tr = document.createElement("tr");
+                tr.id = "rdr-" + item.RedirectId;
+
+                var cellName = document.createElement("td");
+
+                var span = document.createElement("span");
+                span.textContent = "go/" + item.Name;
+                span.style = "padding-left: 5px;"
+                cellName.appendChild(span);
+
+                var input = document.createElement("input");
+                input.id = "lnk-" + item.RedirectId;
+                input.type = "text";
+                input.style = "display:none;"
+                input.value = "go/" + item.Name;
+                cellName.appendChild(input);
+                tr.appendChild(cellName);
+
+                var cellTarget = document.createElement("td");
+                var targetA = document.createElement("a");
+                targetA.href = item.Target;
+                targetA.textContent = item.Target;
+                cellTarget.appendChild(targetA);
+                tr.appendChild(cellTarget);
+
+                var cellDesc = document.createElement("td");
+                cellDesc.textContent = item.Description;
+                tr.appendChild(cellDesc);
+
+                var cellOwner = document.createElement("td");
+                cellOwner.textContent = item.OwnerName;
+                tr.appendChild(cellOwner);
+
+                var cellDel = document.createElement("td");
+                cellDel.classList.add("text-center");
+                cellDel.appendChild(getDeleteButton(item.RedirectId));
+                tr.appendChild(cellDel);
+
+                //spanName.classList.add("name");
+                //spanType.classList.add("type");
+                //spanCategory.classList.add("category");
+                return tr;
+            }
+
+            function generateList() {
+                var frag = document.createDocumentFragment();
+                for (var i = 0; i < filteredList.length; i++) {
+                    if (i < maxDisplayLimit) {
+                        var item = filteredList[i],
+                            li = generateListItem(item);
+                        frag.appendChild(li);
+                    } else break;
+                }
+                displayList.innerHTML = "";
+                displayList.appendChild(frag);
+                generateCountMessage();
+            }
+
+            function textMatch(item) {
+                var searchTerm = textInput.value.toLowerCase(),
+                    itemText = (item.Target + item.Name + item.Description + item.OwnerName).toLowerCase();
+                return itemText.indexOf(searchTerm) !== -1;
+            }
+
+            function getFilteredItems() {
+                filteredList = list.filter(textMatch);
+                generateList();
+            }
+
+            function clearFilteredItems() {
+                textInput.value = "";
+                getFilteredItems();
+            }
+
+            textInput.addEventListener("keyup", getFilteredItems);
+            filterClear.addEventListener("click", clearFilteredItems);
+
+            getFilteredItems();
+        })();
+    </script>
+}

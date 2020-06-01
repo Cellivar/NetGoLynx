@@ -26,8 +26,13 @@
         string Description { get; }
 
         /// <summary>
-        /// Gets or sets the AccountID of the owner account.
+        /// Gets the AccountID of the owner account.
         /// </summary>
         int AccountId { get; }
+
+        /// <summary>
+        /// Gets the account of the owner account.
+        /// </summary>
+        Account Account { get; }
     }
 }

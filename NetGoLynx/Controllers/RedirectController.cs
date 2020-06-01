@@ -43,6 +43,13 @@ namespace NetGoLynx.Controllers
             return View("List", new ListModel(redirects: redirects, id: highlightId));
         }
 
+        [HttpGet("listall")]
+        public async Task<IActionResult> ListAllAsync()
+        {
+            var allRedirects = await _redirectService.GetAllWithUsernameAsync();
+            return View("ListAll", new ListAllModel(redirects: allRedirects));
+        }
+
         /// <summary>
         /// Get the add redirect page.
         /// </summary>

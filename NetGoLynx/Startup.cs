@@ -4,8 +4,10 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -90,7 +92,8 @@ namespace NetGoLynx
             // Register services
             services
                 .AddTransient<IAccountService, AccountService>()
-                .AddTransient<IRedirectService, RedirectService>();
+                .AddTransient<IRedirectService, RedirectService>()
+                .AddTransient<INetGoLynxClaimsPrincipalFactory, NetGoLynxClaimsPrincipalFactory>();
 
             services
                 .TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -169,9 +172,13 @@ namespace NetGoLynx
                     options.CallbackPath = new PathString("/_/api/v1/account/signin-google");
 
                     options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
+
+                    options.Events = new OAuthEvents
+                    {
+                        OnCreatingTicket = AddNetGoLynxClaims
+                    };
                 });
             }
-
         }
 
         private void AddGitHub(AuthenticationBuilder auth)
@@ -194,6 +201,11 @@ namespace NetGoLynx
                     options.Scope.Add("user:email");
 
                     options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
+
+                    options.Events = new OAuthEvents
+                    {
+                        OnCreatingTicket = AddNetGoLynxClaims
+                    };
                 });
             }
         }
@@ -220,7 +232,7 @@ namespace NetGoLynx
 
                     options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email");
 
-                    options.Events = new Microsoft.AspNetCore.Authentication.OAuth.OAuthEvents
+                    options.Events = new OAuthEvents
                     {
                         OnCreatingTicket = async context =>
                         {
@@ -236,11 +248,18 @@ namespace NetGoLynx
 
                             using var user = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
                             context.RunClaimActions(user.RootElement);
+
+                            await AddNetGoLynxClaims(context);
                         }
                     };
                 });
             }
+        }
 
+        private async Task AddNetGoLynxClaims(OAuthCreatingTicketContext ctx)
+        {
+            var claimService = ctx.HttpContext.RequestServices.GetRequiredService<INetGoLynxClaimsPrincipalFactory>();
+            ctx.Identity.AddClaims(await claimService.GetClaims(ctx.Principal));
         }
     }
 }
