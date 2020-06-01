@@ -32,17 +32,29 @@ namespace NetGoLynx.Models.Configuration.Authentication
         /// <summary>
         /// Gets or sets the OAuth auth endpoint URL
         /// </summary>
-        public string AuthorizationEndpoint => $"{OktaDomain}/oauth2/default/v1/authorize";
+        /// <remarks>
+        /// No /default/ between oauth2 and v1 here because that only applies to
+        /// custom auth servers: https://developer.okta.com/docs/reference/api/oidc/
+        /// </remarks>
+        public string AuthorizationEndpoint => $"{OktaDomain}/oauth2/v1/authorize";
 
         /// <summary>
         /// Gets or sets the OAuth token endpoint URL
         /// </summary>
-        public string TokenEndpoint => $"{OktaDomain}/oauth2/default/v1/token";
+        /// <remarks>
+        /// No /default/ between oauth2 and v1 here because that only applies to
+        /// custom auth servers: https://developer.okta.com/docs/reference/api/oidc/
+        /// </remarks>
+        public string TokenEndpoint => $"{OktaDomain}/oauth2/v1/token";
 
         /// <summary>
         /// Gets or sets the user information URL
         /// </summary>
-        public string UserInformationEndpoint => $"{OktaDomain}/oauth2/default/v1/userinfo";
+        /// <remarks>
+        /// No /default/ between oauth2 and v1 here because that only applies to
+        /// custom auth servers: https://developer.okta.com/docs/reference/api/oidc/
+        /// </remarks>
+        public string UserInformationEndpoint => $"{OktaDomain}/oauth2/v1/userinfo";
 
         /// <summary>
         /// Gets or sets the okta domain.

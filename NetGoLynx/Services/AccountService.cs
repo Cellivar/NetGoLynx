@@ -2,24 +2,34 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using NetGoLynx.Data;
 using NetGoLynx.Models;
+using NetGoLynx.Models.Configuration;
 
 namespace NetGoLynx.Services
 {
     public class AccountService : IAccountService
     {
-        private RedirectContext _context;
+        private readonly RedirectContext _context;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly AccountSettings _accountSettings;
 
         public AccountService(
             RedirectContext context,
-            IHttpContextAccessor contextAccessor)
+            IHttpContextAccessor contextAccessor,
+            IConfiguration configuration)
         {
             _context = context;
             _contextAccessor = contextAccessor;
+            _accountSettings = configuration.GetSection("AccountSettings").Get<AccountSettings>();
         }
 
+        /// <summary>
+        /// Get an account by username
+        /// </summary>
+        /// <param name="name">The name to get the account by.</param>
+        /// <returns>The account with that username, or null.</returns>
         public async Task<IAccount> Get(string name)
         {
             if (string.IsNullOrEmpty(name))
@@ -27,7 +37,10 @@ namespace NetGoLynx.Services
                 return null;
             }
 
-            return await _context.Accounts.FirstOrDefaultAsync(a => a.Name == name);
+            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Name == name);
+
+            SetAdminFlag(ref account);
+            return account;
         }
 
         public async Task<IAccount> Get(int id)
@@ -37,7 +50,10 @@ namespace NetGoLynx.Services
                 return null;
             }
 
-            return await _context.Accounts.FindAsync(id);
+            var account = await _context.Accounts.FindAsync(id);
+
+            SetAdminFlag(ref account);
+            return account;
         }
 
         public async Task<IAccount> Get(ClaimsPrincipal claimsPrincipal)
@@ -70,6 +86,8 @@ namespace NetGoLynx.Services
             await _context.Accounts.AddAsync(account);
             await _context.SaveChangesAsync();
 
+            SetAdminFlag(ref account);
+
             return (account, true);
         }
 
@@ -87,6 +105,14 @@ namespace NetGoLynx.Services
         private string GetEmailFromClaimsPrincipal(ClaimsPrincipal claimsPrincipal)
         {
             return claimsPrincipal?.FindFirstValue(ClaimTypes.Email);
+        }
+
+        private void SetAdminFlag(ref Account account)
+        {
+            if (account != null)
+            {
+                account.Access = _accountSettings.IsAdmin(account) ? AccessType.Admin : account.Access;
+            }
         }
     }
 }
