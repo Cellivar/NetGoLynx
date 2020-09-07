@@ -74,6 +74,13 @@ namespace NetGoLynx
 
             services.AddDbContext<RedirectContext>(GetDatabaseContext);
 
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
+                options.OnAppendCookie = c => CookieHandler.CheckSameSite(c.Context, c.CookieOptions);
+                options.OnDeleteCookie = c => CookieHandler.CheckSameSite(c.Context, c.CookieOptions);
+            });
+
             // Conditionally chain together calls to add auth providers.
             var auth = services.AddAuthentication(options =>
             {
@@ -124,6 +131,7 @@ namespace NetGoLynx
             app.UseStaticFiles();
             app.UseRouting();
 
+            app.UseCookiePolicy();
             app.UseAuthentication();
             app.UseAuthorization();
 
