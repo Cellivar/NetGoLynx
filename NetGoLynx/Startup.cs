@@ -93,7 +93,8 @@ namespace NetGoLynx
             services
                 .AddTransient<IAccountService, AccountService>()
                 .AddTransient<IRedirectService, RedirectService>()
-                .AddTransient<INetGoLynxClaimsPrincipalFactory, NetGoLynxClaimsPrincipalFactory>();
+                .AddTransient<INetGoLynxClaimsPrincipalFactory, NetGoLynxClaimsPrincipalFactory>()
+                .AddTransient<IFilesystemService, FilesystemService>();
 
             services
                 .TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();

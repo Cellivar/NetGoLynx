@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:50856",
+      "applicationUrl": "http://localhost:60856",
       "sslPort": 44384
     }
   },
@@ -31,7 +31,7 @@
         "ASPNETCORE_URLS": "https://+:443;http://+:80",
         "ASPNETCORE_HTTPS_PORT": "44385"
       },
-      "httpPort": 50862,
+      "httpPort": 60862,
       "useSSL": true,
       "sslPort": 44385
     }
