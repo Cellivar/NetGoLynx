@@ -349,3 +349,6 @@ healthchecksdb
 MigrationBackup/
 /NetGoLynx/redirects.db
 /NetGoLynx/NetGoLynx.xml
+
+appsettings.Development.json
+docker-bake.hcl
