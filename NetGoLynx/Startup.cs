@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using NetGoLynx.Data;
+using NetGoLynx.Models.Configuration;
 using NetGoLynx.Models.Configuration.Authentication;
 using NetGoLynx.Services;
 
@@ -57,6 +59,8 @@ namespace NetGoLynx
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
+                options.Secure = CookieSecurePolicy.Always;
+                options.HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always;
             });
 
             services
@@ -73,6 +77,20 @@ namespace NetGoLynx
             services.AddMemoryCache();
 
             services.AddDbContext<RedirectContext>(GetDatabaseContext);
+
+            var proxySettings = Configuration.GetSection("ProxyNetworks").Get<ProxyNetworks>();
+            if (proxySettings != null)
+            {
+                // Known proxy configuration, for when running behind a proxy of some sort.
+                services.Configure<ForwardedHeadersOptions>(options =>
+                {
+                    options.ForwardedHeaders =
+                        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
+                    options.KnownNetworks.Clear();
+                    options.KnownProxies.Clear();
+                    options.AllowedHosts = proxySettings.AllowedHosts;
+                });
+            }
 
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -116,6 +134,8 @@ namespace NetGoLynx
         /// </remarks>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseForwardedHeaders();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -124,10 +144,10 @@ namespace NetGoLynx
             {
                 app.UseExceptionHandler("/_/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                //app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
 
