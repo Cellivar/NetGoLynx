@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29009.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetGoLynx", "NetGoLynx\NetGoLynx.csproj", "{6101E084-9B1E-42B6-B662-177406397FCE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetGoLynx.Tests", "NetGoLynx.Tests\NetGoLynx.Tests.csproj", "{4C0949EC-B022-43CB-A9C1-EC76C6C16BD1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetGoLynx.Tests", "NetGoLynx.Tests\NetGoLynx.Tests.csproj", "{4C0949EC-B022-43CB-A9C1-EC76C6C16BD1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
