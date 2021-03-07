@@ -21,7 +21,7 @@ namespace NetGoLynx.Controllers.Api
         /// <summary>
         /// Initializes a new instance of the <see cref="AccountApiController"/> class.
         /// </summary>
-        /// <param name="context"></param>
+        /// <param name="accountService">The account service to use.</param>
         public AccountApiController(IAccountService accountService)
         {
             _accountService = accountService;
