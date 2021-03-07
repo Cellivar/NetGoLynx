@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using NetGoLynx.Models;
 using NetGoLynx.Services;
@@ -69,6 +70,21 @@ namespace NetGoLynx.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        /// <summary>
+        /// Get server information
+        /// </summary>
+        /// <returns>Information about the server</returns>
+        [EnableCors("AllowAll")]
+        [HttpGet("/_/Home/Info")]
+        public IActionResult Info()
+        {
+            return Ok(new
+            {
+                service = "netgolynx",
+                version = "1.2.0",
+            });
         }
     }
 }

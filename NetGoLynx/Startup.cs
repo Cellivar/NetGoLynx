@@ -92,6 +92,8 @@ namespace NetGoLynx
                 });
             }
 
+            AddCors(services);
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
@@ -151,6 +153,8 @@ namespace NetGoLynx
             app.UseStaticFiles();
             app.UseRouting();
 
+            app.UseCors();
+
             app.UseCookiePolicy();
             app.UseAuthentication();
             app.UseAuthorization();
@@ -161,12 +165,28 @@ namespace NetGoLynx
             });
         }
 
+        private void AddCors(IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+
+                options.AddPolicy("AllowAll",
+                    builder =>
+                    {
+                        builder.WithOrigins("*")
+                            .AllowAnyHeader()
+                            .WithMethods("GET");
+                    });
+            });
+        }
+
         private void GetDatabaseContext(DbContextOptionsBuilder options)
         {
-            var conStrs = Configuration.GetSection("ConnectionStrings").GetChildren();
+            var conStrs = Configuration.GetSection("ConnectionStrings")?.GetChildren() ?? Array.Empty<IConfigurationSection>();
+            conStrs = conStrs.Where(c => c.Exists() && !string.IsNullOrWhiteSpace(c.Value));
             if (conStrs.Count() != 1)
             {
-                throw new ArgumentOutOfRangeException("Must provide one (and only one) valid connection string.");
+                throw new ArgumentOutOfRangeException(nameof(options), "Must provide one (and only one) valid connection string.");
             }
 
             var conString = conStrs.First();
