@@ -32,6 +32,11 @@ namespace NetGoLynx.Controllers
         [HttpGet("Login")]
         public IActionResult LoginAsync()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("List", "Redirect");
+            }
+
             return View(new LoginModel(_availableSchemes));
         }
 
