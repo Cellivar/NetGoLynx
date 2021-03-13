@@ -1,4 +1,6 @@
-﻿namespace NetGoLynx.Models.Configuration
+﻿using System;
+
+namespace NetGoLynx.Models.Configuration
 {
     /// <summary>
     /// Model for proxy network configuration
@@ -20,5 +22,16 @@
         /// form.
         /// </remarks>
         public string[] AllowedHosts { get; set; } = System.Array.Empty<string>();
+
+        /// <summary>
+        /// Gets or sets the URI that the web interface should be redirected to. Requests
+        /// to the web interface will be redirected to this host if the reqeust host does not
+        /// match. This ensures users use a known UI host for OAuth integrations.
+        /// </summary>
+        /// <remarks>
+        /// Must be a valid URI, such as https://goto.contoso.com. Any elements other
+        /// than host and scheme will be ignored.
+        /// </remarks>
+        public Uri WebInterfaceHost { get; set; }
     }
 }

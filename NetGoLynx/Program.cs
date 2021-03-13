@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 [assembly: InternalsVisibleTo("NetGoLynx.Tests")]
 
@@ -37,7 +38,13 @@ namespace NetGoLynx
         /// <param name="args">Arguments list</param>
         /// <returns>The constructed <see cref="IWebHostBuilder"/></returns>
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder =>
+            Host.CreateDefaultBuilder(args)
+            .ConfigureLogging(options =>
+            {
+                options.ClearProviders();
+                options.AddSimpleConsole(options => options.TimestampFormat = "[HH:mm:ss] ");
+            })
+            .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder.UseStartup<Startup>();
             });

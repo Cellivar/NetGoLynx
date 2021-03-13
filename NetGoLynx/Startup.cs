@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,7 @@ using Microsoft.Extensions.Hosting;
 using NetGoLynx.Data;
 using NetGoLynx.Models.Configuration;
 using NetGoLynx.Models.Configuration.Authentication;
+using NetGoLynx.Redirects;
 using NetGoLynx.Services;
 
 namespace NetGoLynx
@@ -158,6 +160,14 @@ namespace NetGoLynx
             app.UseCookiePolicy();
             app.UseAuthentication();
             app.UseAuthorization();
+
+            // If there are proxy settings there should probably be a host to redirect the web UI to.
+            var proxySettings = Configuration.GetSection("ProxyNetworks").Get<ProxyNetworks>();
+            if (proxySettings != null && proxySettings.WebInterfaceHost != null)
+            {
+                app.UseRewriter(new RewriteOptions()
+                    .Add(new RedirectWebUIRule(proxySettings.WebInterfaceHost)));
+            }
 
             app.UseEndpoints(endpoints =>
             {
