@@ -19,6 +19,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using NetGoLynx.Data;
 using NetGoLynx.Models.Configuration;
@@ -93,6 +94,8 @@ namespace NetGoLynx
                     options.AllowedHosts = proxySettings.AllowedHosts;
                 });
             }
+
+            AddHealthchecks(services);
 
             AddCors(services);
 
@@ -172,6 +175,7 @@ namespace NetGoLynx
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("/_/health");
             });
         }
 
@@ -188,6 +192,14 @@ namespace NetGoLynx
                             .WithMethods("GET");
                     });
             });
+        }
+
+        private void AddHealthchecks(IServiceCollection services)
+        {
+            services.AddHealthChecks()
+                .AddCheck("AliveCheck", () =>
+                    HealthCheckResult.Healthy("App is alive"),
+                    tags: new[] { "alive" });
         }
 
         private void GetDatabaseContext(DbContextOptionsBuilder options)

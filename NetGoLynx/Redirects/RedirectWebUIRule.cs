@@ -17,6 +17,7 @@ namespace NetGoLynx.Redirects
         private readonly string _redirectHost;
 
         private readonly PathString _apiPrefix = new PathString("/_");
+        private readonly PathString _healthcheckPrefix = new PathString("/_/health");
 
         /// <summary>
         /// Instantiates a new instance of the <see cref="RedirectWebUIRule"/> class.
@@ -35,7 +36,7 @@ namespace NetGoLynx.Redirects
             var request = context.HttpContext.Request;
 
             // If the request doesn't have the API prefix it shouldn't be redirected.
-            if (!request.Path.StartsWithSegments(_apiPrefix))
+            if (!request.Path.StartsWithSegments(_apiPrefix) || request.Path.StartsWithSegments(_healthcheckPrefix))
             {
                 context.Result = RuleResult.ContinueRules;
                 return;

@@ -14,6 +14,8 @@ My company didn't have one and it sounded like a fun learning experiment.
 
 Like any URL shortener, it can take a valid URL string (anything other than ``{} | ^ ~ [] ` ; /\ ? : @ # = % & <>`` and `spaces`). This includes emoji 👍! You can add and delete URLs as much as you like.
 
+There's just one exception: the redirect `_` is reserved for the user interface and the API.
+
 ## Contributing
 
 PRs accepted! Please make sure your code follows the editorconfig in the repository and otherwise adheres to standard C# development practices.
@@ -229,3 +231,9 @@ An example configuration all together:
   }
 }
 ```
+
+### Health checks
+
+When running in a cluster management of some sort you'll probably want to configure a healthcheck at `/_/health`. By default this will run a handful of fairly lightweight checks to ensure that the app can support redirecting URLs. If the app is in a state where it cannot resolve redirects it will show as unhealthy.
+
+Why not use the more standard `/health` endpoint? Simple: that's a valid shortlink! It could be a link to your company's health practices, or maybe the gym membership signup information. All API endpoints are under the `/_/` path, including the health endpoint.
