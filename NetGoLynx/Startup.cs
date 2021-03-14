@@ -21,6 +21,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using NetGoLynx.Data;
 using NetGoLynx.Models.Configuration;
 using NetGoLynx.Models.Configuration.Authentication;
@@ -164,12 +165,20 @@ namespace NetGoLynx
             app.UseAuthentication();
             app.UseAuthorization();
 
+            // Create a simple logger for debugging purposes.
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddConfiguration(Configuration);
+                builder.AddConsole();
+            });
+            var logger = loggerFactory.CreateLogger<Startup>();
+
             // If there are proxy settings there should probably be a host to redirect the web UI to.
             var proxySettings = Configuration.GetSection("ProxyNetworks").Get<ProxyNetworks>();
             if (proxySettings != null && proxySettings.WebInterfaceHost != null)
             {
                 app.UseRewriter(new RewriteOptions()
-                    .Add(new RedirectWebUIRule(proxySettings.WebInterfaceHost)));
+                    .Add(new RedirectWebUIRule(proxySettings.WebInterfaceHost, logger)));
             }
 
             app.UseEndpoints(endpoints =>
